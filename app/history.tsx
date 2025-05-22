@@ -1,6 +1,7 @@
+import { Ionicons } from '@expo/vector-icons'; // Предполагаем, что Ionicons доступны
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Button, FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { getMeasurements } from '../src/services/storageService';
 import { Measurement } from '../src/types';
 
@@ -42,58 +43,75 @@ export default function HistoryScreen() {
           contentContainerStyle={styles.listContentContainer}
         />
       )}
-      <View style={styles.buttonContainer}>
-        <Button title="Добавить новое измерение" onPress={() => router.push('/')} accessibilityLabel="Кнопка Добавить новое измерение" />
-      </View>
+      <TouchableOpacity style={styles.fab} onPress={() => router.push('/')} accessibilityLabel="Добавить новое измерение">
+        <Ionicons name="add" size={24} color="white" />
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // Existing styles will be updated below, and new styles for FAB will be added
   container: {
     flex: 1,
-    padding: 24, // Increased padding
-    backgroundColor: '#f7f7f7', // Softer background color
+    backgroundColor: '#F0F2F5', // Новый цвет фона как на дизайне
+    paddingHorizontal: 16, // Горизонтальный padding
+    paddingTop: 20, // Верхний padding
   },
   listContentContainer: {
-    paddingBottom: 24, // Increased padding
+    paddingBottom: 80, // Увеличиваем отступ снизу, чтобы FAB не перекрывал последний элемент
   },
   itemContainer: {
-    backgroundColor: '#fff',
-    padding: 18, // Increased padding
-    marginBottom: 12, // Increased margin
-    borderRadius: 10, // More rounded corners
-    borderWidth: 1,
-    borderColor: '#e0e0e0', // Slightly darker, more defined border
-    shadowColor: '#000',
+    backgroundColor: '#FFFFFF',
+    padding: 16,
+    marginBottom: 16,
+    borderRadius: 12,
+    shadowColor: '#000000',
     shadowOffset: {
       width: 0,
-      height: 1,
+      height: 2,
     },
-    shadowOpacity: 0.05, // Softer shadow
-    shadowRadius: 2.00,
-    elevation: 2, // Subtle elevation for Android
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   dateText: {
     fontSize: 14,
-    color: '#555', // Darker gray for better contrast
-    marginBottom: 6,
-    fontWeight: '500',
+    color: '#6B7280', // Серый цвет для даты
+    marginBottom: 8,
+    fontWeight: 'normal',
   },
   measurementText: {
     fontSize: 16,
-    color: '#333', // Darker text color
-    marginBottom: 4,
-    lineHeight: 22, // Improved line height
+    color: '#1F2937', // Темный цвет для основного текста
+    marginBottom: 6,
+    lineHeight: 24,
   },
   emptyText: {
     textAlign: 'center',
-    marginTop: 60, // Increased margin
+    marginTop: 80,
     fontSize: 18,
-    color: '#777', // Slightly darker for better readability
+    color: '#6B7280',
   },
-  buttonContainer: {
-    marginTop: 24, // Increased top margin
-    marginBottom: 15, // Increased bottom margin
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 16,
+    bottom: 16,
+    backgroundColor: '#6366F1', // Фиолетовый цвет для FAB, можно подобрать точнее
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8, // Тень для Android
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
   },
+  // buttonContainer будет удален, так как мы используем FAB
 });

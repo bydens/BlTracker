@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { saveMeasurement } from '../src/services/storageService';
 
 export default function LogPressureScreen() {
@@ -70,42 +70,68 @@ export default function LogPressureScreen() {
         accessibilityLabel="Поле ввода пульса"
       />
 
-      <Button title="Сохранить измерение" onPress={handleSaveMeasurement} accessibilityLabel="Кнопка Сохранить измерение" />
-      <View style={styles.linkContainer}>
-        <Button title="Перейти к истории" onPress={() => router.push('/history')} accessibilityLabel="Кнопка Перейти к истории" />
-      </View>
+      <TouchableOpacity style={styles.button} onPress={handleSaveMeasurement} accessibilityLabel="Кнопка Сохранить измерение">
+        <Text style={styles.buttonText}>Сохранить измерение</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={() => router.push('/history')} accessibilityLabel="Кнопка Перейти к истории">
+        <Text style={[styles.buttonText, styles.secondaryButtonText]}>Перейти к истории</Text>
+      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // Existing styles will be updated below
   container: {
     flex: 1,
-    padding: 24, // Increased padding
-    backgroundColor: '#f7f7f7', // Softer background color
+    paddingHorizontal: 24,
+    paddingVertical: 32,
+    backgroundColor: '#F0F2F5', // Новый цвет фона
   },
   label: {
     fontSize: 16,
-    fontWeight: '500', // Slightly bolder
-    color: '#333',
-    marginBottom: 10, // Increased margin
+    fontWeight: '600',
+    color: '#1F2937', // Темный цвет для заголовков
+    marginBottom: 8,
   },
   input: {
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#ddd', // Lighter border
-    paddingVertical: 12, // Increased vertical padding
-    paddingHorizontal: 15, // Increased horizontal padding
-    marginBottom: 24, // Increased margin
-    borderRadius: 8, // More rounded corners
+    borderColor: '#D1D5DB', // Светло-серый бордер
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    marginBottom: 20,
+    borderRadius: 10,
     fontSize: 16,
-    color: '#333',
+    color: '#1F2937',
   },
-  buttonWrapper: { // Wrapper for button styling
-    marginBottom: 15, // Space between buttons
+  button: {
+    backgroundColor: '#6366F1', // Фиолетовый цвет кнопки
+    paddingVertical: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  linkContainer: {
-    marginTop: 25, // Increased top margin
-    alignItems: 'center', // Center the button if it's a single link
+  buttonText: {
+    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '600',
   },
+  secondaryButton: {
+    backgroundColor: '#FFFFFF',
+    borderColor: '#6366F1',
+    borderWidth: 1,
+  },
+  secondaryButtonText: {
+    color: '#6366F1',
+  },
+  // linkContainer будет удален, так как кнопки теперь стилизованы индивидуально
 });
