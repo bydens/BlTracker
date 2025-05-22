@@ -43,7 +43,7 @@ export default function HistoryScreen() {
           contentContainerStyle={styles.listContentContainer}
         />
       )}
-      <TouchableOpacity style={styles.fab} onPress={() => router.push('/')} accessibilityLabel="Добавить новое измерение">
+      <TouchableOpacity style={styles.fab} onPress={() => router.push('/form')} accessibilityLabel="Добавить новое измерение">
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
     </View>
@@ -113,5 +113,4 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.30,
     shadowRadius: 4.65,
   },
-  // buttonContainer будет удален, так как мы используем FAB
 });

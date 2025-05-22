@@ -16,6 +16,12 @@ export default function RootLayout() {
       <Stack.Screen 
         name="index" 
         options={{
+          headerShown: false, // Скрываем заголовок для приветственного экрана
+        }}
+      />
+      <Stack.Screen 
+        name="form" 
+        options={{
           title: 'Добавить измерение',
         }}
       />

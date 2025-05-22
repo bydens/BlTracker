@@ -1,116 +1,74 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { saveMeasurement } from '../src/services/storageService';
+import React from 'react';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SvgXml } from 'react-native-svg'; // Предполагаем, что react-native-svg установлен
 
-export default function LogPressureScreen() {
-  const [systolic, setSystolic] = useState('');
-  const [diastolic, setDiastolic] = useState('');
-  const [pulse, setPulse] = useState('');
+// SVG-код для линии пульса
+const heartbeatSvg = `
+<svg width="150" height="100" viewBox="0 0 150 100" xmlns="http://www.w3.org/2000/svg" fill="none">
+  <path d="M0 50 H30 L40 30 L50 70 L60 40 L70 60 L80 50 H150" stroke="#6366F1" stroke-width="4" />
+</svg>
+`;
+
+export default function WelcomeScreen() {
   const router = useRouter();
 
-  const handleSaveMeasurement = async () => {
-    if (!systolic || !diastolic || !pulse) {
-      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');
-      return;
-    }
-
-    const systolicNum = parseInt(systolic, 10);
-    const diastolicNum = parseInt(diastolic, 10);
-    const pulseNum = parseInt(pulse, 10);
-
-    if (isNaN(systolicNum) || isNaN(diastolicNum) || isNaN(pulseNum)) {
-      Alert.alert('Ошибка', 'Пожалуйста, введите корректные числовые значения.');
-      return;
-    }
-
-    try {
-      await saveMeasurement({ systolic: systolicNum, diastolic: diastolicNum, pulse: pulseNum });
-      Alert.alert('Успех', 'Измерение сохранено.');
-      setSystolic('');
-      setDiastolic('');
-      setPulse('');
-      // Optionally navigate to history screen or clear form
-      // router.push('/history'); 
-    } catch (error) {
-      Alert.alert('Ошибка', 'Не удалось сохранить измерение.');
-      console.error('Failed to save measurement:', error);
-    }
+  const handleContinue = () => {
+    router.replace('/form'); // Переход на главный экран (index)
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>Систолическое давление (мм рт. ст.):</Text>
-      <TextInput
-        style={styles.input}
-        value={systolic}
-        onChangeText={setSystolic}
-        keyboardType="number-pad"
-        placeholder="120"
-        accessibilityLabel="Поле ввода систолического давления"
-      />
-
-      <Text style={styles.label}>Диастолическое давление (мм рт. ст.):</Text>
-      <TextInput
-        style={styles.input}
-        value={diastolic}
-        onChangeText={setDiastolic}
-        keyboardType="number-pad"
-        placeholder="80"
-        accessibilityLabel="Поле ввода диастолического давления"
-      />
-
-      <Text style={styles.label}>Пульс (уд/мин):</Text>
-      <TextInput
-        style={styles.input}
-        value={pulse}
-        onChangeText={setPulse}
-        keyboardType="number-pad"
-        placeholder="60"
-        accessibilityLabel="Поле ввода пульса"
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleSaveMeasurement} accessibilityLabel="Кнопка Сохранить измерение">
-        <Text style={styles.buttonText}>Сохранить измерение</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={() => router.push('/history')} accessibilityLabel="Кнопка Перейти к истории">
-        <Text style={[styles.buttonText, styles.secondaryButtonText]}>Перейти к истории</Text>
+      <Text style={styles.title}>Добро пожаловать!</Text>
+      <View style={styles.svgContainer}>
+        <SvgXml xml={heartbeatSvg} width="150" height="100" />
+      </View>
+      <Text style={styles.subtitle}>
+        Это приложение поможет вам отслеживать ваше артериальное давление.
+      </Text>
+      <TouchableOpacity 
+        style={styles.button}
+        onPress={handleContinue}
+        accessibilityLabel="Кнопка Продолжить"
+      >
+        <Text style={styles.buttonText}>Продолжить</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // Existing styles will be updated below
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F0F2F5',
     paddingHorizontal: 24,
-    paddingVertical: 32,
-    backgroundColor: '#F0F2F5', // Новый цвет фона
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1F2937', // Темный цвет для заголовков
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#D1D5DB', // Светло-серый бордер
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 20,
-    borderRadius: 10,
-    fontSize: 16,
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
     color: '#1F2937',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  svgContainer: {
+    marginBottom: 30,
+    alignItems: 'center',
+  },
+  subtitle: {
+    fontSize: 18,
+    color: '#4B5563',
+    textAlign: 'center',
+    marginBottom: 40,
+    lineHeight: 26,
   },
   button: {
-    backgroundColor: '#6366F1', // Фиолетовый цвет кнопки
+    backgroundColor: '#6366F1',
     paddingVertical: 16,
+    paddingHorizontal: 32,
     borderRadius: 10,
     alignItems: 'center',
-    marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -119,19 +77,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    width: '100%',
+    maxWidth: 300,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
-  secondaryButton: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#6366F1',
-    borderWidth: 1,
-  },
-  secondaryButtonText: {
-    color: '#6366F1',
-  },
-  // linkContainer будет удален, так как кнопки теперь стилизованы индивидуально
 });
