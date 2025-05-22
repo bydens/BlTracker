@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { SvgXml } from 'react-native-svg';
 
 // SVG для линии пульса
@@ -16,12 +16,6 @@ export default function WelcomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Image
-          source={{ uri: 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg' }}
-          style={styles.backgroundImage}
-        />
-        <View style={styles.overlay} />
-        
         <View style={styles.heartbeatContainer}>
           <SvgXml xml={heartbeatSvg} />
         </View>
@@ -33,21 +27,12 @@ export default function WelcomeScreen() {
           </Text>
         </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={styles.button}
-            onPress={() => router.push('/form')}
-          >
-            <Text style={styles.buttonText}>Новое измерение</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={[styles.button, styles.secondaryButton]}
-            onPress={() => router.push('/history')}
-          >
-            <Text style={[styles.buttonText, styles.secondaryButtonText]}>История измерений</Text>
-          </TouchableOpacity>
-        </View>
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={() => router.push('/form')}
+        >
+          <Text style={styles.buttonText}>Новое измерение</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -60,47 +45,29 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     padding: 24,
   },
-  backgroundImage: {
-    width: '100%',
-    height: '60%',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-  },
-  overlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    height: '60%',
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-  },
   heartbeatContainer: {
-    marginTop: '70%',
     alignItems: 'center',
     justifyContent: 'center',
+    marginBottom: 48,
   },
   textContainer: {
-    marginTop: 32,
+    marginBottom: 48,
   },
   title: {
     fontSize: 32,
     fontWeight: '700',
     color: '#1a1a1a',
     marginBottom: 16,
+    textAlign: 'center',
   },
   subtitle: {
     fontSize: 17,
     color: '#666666',
-    marginBottom: 32,
     lineHeight: 24,
-  },
-  buttonContainer: {
-    gap: 12,
+    textAlign: 'center',
   },
   button: {
     backgroundColor: '#007AFF',
@@ -120,14 +87,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 17,
     fontWeight: '600',
-  },
-  secondaryButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: '#007AFF',
-    shadowOpacity: 0,
-  },
-  secondaryButtonText: {
-    color: '#007AFF',
   },
 });

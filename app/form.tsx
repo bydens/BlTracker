@@ -82,6 +82,13 @@ export default function LogPressureScreen() {
         <TouchableOpacity style={styles.button} onPress={handleSaveMeasurement}>
           <Text style={styles.buttonText}>Сохранить</Text>
         </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[styles.button, styles.secondaryButton]}
+          onPress={() => router.push('/history')}
+        >
+          <Text style={[styles.buttonText, styles.secondaryButtonText]}>История измерений</Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
@@ -134,6 +141,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 8,
+    gap: 12,
   },
   button: {
     backgroundColor: '#007AFF',
@@ -153,5 +161,14 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 17,
     fontWeight: '600',
+  },
+  secondaryButton: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: '#007AFF',
+    shadowOpacity: 0,
+  },
+  secondaryButtonText: {
+    color: '#007AFF',
   },
 });
