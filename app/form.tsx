@@ -1,17 +1,20 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from 'react-native';
 import { saveMeasurement } from '../src/services/storageService';
 
 export default function LogPressureScreen() {
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [pulse, setPulse] = useState('');
+  const [error, setError] = useState('');
   const router = useRouter();
 
   const handleSaveMeasurement = async () => {
+    setError('');
+    
     if (!systolic || !diastolic || !pulse) {
-      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');
+      setError('Пожалуйста, заполните все поля');
       return;
     }
 
@@ -20,118 +23,135 @@ export default function LogPressureScreen() {
     const pulseNum = parseInt(pulse, 10);
 
     if (isNaN(systolicNum) || isNaN(diastolicNum) || isNaN(pulseNum)) {
-      Alert.alert('Ошибка', 'Пожалуйста, введите корректные числовые значения.');
+      setError('Пожалуйста, введите корректные числовые значения');
       return;
     }
 
     try {
       await saveMeasurement({ systolic: systolicNum, diastolic: diastolicNum, pulse: pulseNum });
-      Alert.alert('Успех', 'Измерение сохранено.');
-      setSystolic('');
-      setDiastolic('');
-      setPulse('');
-      // Optionally navigate to history screen or clear form
-      // router.push('/history'); 
+      router.push('/history');
     } catch (error) {
-      Alert.alert('Ошибка', 'Не удалось сохранить измерение.');
-      console.error('Failed to save measurement:', error);
+      setError('Не удалось сохранить измерение');
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Систолическое давление (мм рт. ст.):</Text>
-      <TextInput
-        style={styles.input}
-        value={systolic}
-        onChangeText={setSystolic}
-        keyboardType="number-pad"
-        placeholder="120"
-        accessibilityLabel="Поле ввода систолического давления"
-      />
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      <View style={styles.card}>
+        <Text style={styles.title}>Систолическое</Text>
+        <TextInput
+          style={styles.input}
+          value={systolic}
+          onChangeText={setSystolic}
+          keyboardType="number-pad"
+          placeholder="120"
+          placeholderTextColor="#999"
+        />
+        <Text style={styles.unit}>мм рт. ст.</Text>
+      </View>
 
-      <Text style={styles.label}>Диастолическое давление (мм рт. ст.):</Text>
-      <TextInput
-        style={styles.input}
-        value={diastolic}
-        onChangeText={setDiastolic}
-        keyboardType="number-pad"
-        placeholder="80"
-        accessibilityLabel="Поле ввода диастолического давления"
-      />
+      <View style={styles.card}>
+        <Text style={styles.title}>Диастолическое</Text>
+        <TextInput
+          style={styles.input}
+          value={diastolic}
+          onChangeText={setDiastolic}
+          keyboardType="number-pad"
+          placeholder="80"
+          placeholderTextColor="#999"
+        />
+        <Text style={styles.unit}>мм рт. ст.</Text>
+      </View>
 
-      <Text style={styles.label}>Пульс (уд/мин):</Text>
-      <TextInput
-        style={styles.input}
-        value={pulse}
-        onChangeText={setPulse}
-        keyboardType="number-pad"
-        placeholder="60"
-        accessibilityLabel="Поле ввода пульса"
-      />
+      <View style={styles.card}>
+        <Text style={styles.title}>Пульс</Text>
+        <TextInput
+          style={styles.input}
+          value={pulse}
+          onChangeText={setPulse}
+          keyboardType="number-pad"
+          placeholder="70"
+          placeholderTextColor="#999"
+        />
+        <Text style={styles.unit}>уд/мин</Text>
+      </View>
 
-      <TouchableOpacity style={styles.button} onPress={handleSaveMeasurement} accessibilityLabel="Кнопка Сохранить измерение">
-        <Text style={styles.buttonText}>Сохранить измерение</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={() => router.push('/history')} accessibilityLabel="Кнопка Перейти к истории">
-        <Text style={[styles.buttonText, styles.secondaryButtonText]}>Перейти к истории</Text>
-      </TouchableOpacity>
-    </View>
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleSaveMeasurement}>
+          <Text style={styles.buttonText}>Сохранить</Text>
+        </TouchableOpacity>
+      </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  // Existing styles will be updated below
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 32,
-    backgroundColor: '#F0F2F5', // Новый цвет фона
+    backgroundColor: '#f5f5f5',
   },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#1F2937', // Темный цвет для заголовков
-    marginBottom: 8,
+  contentContainer: {
+    padding: 16,
   },
-  input: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#D1D5DB', // Светло-серый бордер
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    marginBottom: 20,
-    borderRadius: 10,
-    fontSize: 16,
-    color: '#1F2937',
-  },
-  button: {
-    backgroundColor: '#6366F1', // Фиолетовый цвет кнопки
-    paddingVertical: 16,
-    borderRadius: 10,
-    alignItems: 'center',
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 16,
     marginBottom: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  title: {
+    fontSize: 15,
+    fontWeight: '500',
+    color: '#666',
+    marginBottom: 8,
+  },
+  input: {
+    fontSize: 34,
+    fontWeight: '600',
+    color: '#1a1a1a',
+    padding: 0,
+    marginBottom: 4,
+  },
+  unit: {
+    fontSize: 13,
+    color: '#999',
+  },
+  error: {
+    color: '#ff3b30',
+    fontSize: 14,
+    marginBottom: 16,
+    textAlign: 'center',
+  },
+  buttonContainer: {
+    marginTop: 8,
+  },
+  button: {
+    backgroundColor: '#007AFF',
+    paddingVertical: 16,
+    borderRadius: 16,
+    alignItems: 'center',
+    shadowColor: '#007AFF',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 17,
     fontWeight: '600',
   },
-  secondaryButton: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#6366F1',
-    borderWidth: 1,
-  },
-  secondaryButtonText: {
-    color: '#6366F1',
-  },
-  // linkContainer будет удален, так как кнопки теперь стилизованы индивидуально
 });

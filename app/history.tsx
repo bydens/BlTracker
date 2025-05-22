@@ -1,4 +1,4 @@
-import { Ionicons } from '@expo/vector-icons'; // Предполагаем, что Ionicons доступны
+import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -14,36 +14,74 @@ export default function HistoryScreen() {
     setMeasurements(data);
   };
 
-  // Load measurements when the screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
       loadMeasurements();
     }, [])
   );
 
-  const renderItem = ({ item }: { item: Measurement }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.dateText}>{new Date(item.date).toLocaleString()}</Text>
-      <Text style={styles.measurementText}>
-        Давление: {item.systolic}/{item.diastolic} мм рт. ст.
-      </Text>
-      <Text style={styles.measurementText}>Пульс: {item.pulse} уд/мин</Text>
-    </View>
-  );
+  const getStatusColor = (systolic: number, diastolic: number) => {
+    if (systolic >= 140 || diastolic >= 90) return '#ff3b30';
+    if (systolic <= 90 || diastolic <= 60) return '#ff9500';
+    return '#34c759';
+  };
+
+  const renderItem = ({ item }: { item: Measurement }) => {
+    const statusColor = getStatusColor(item.systolic, item.diastolic);
+    const date = new Date(item.date);
+    
+    return (
+      <View style={styles.itemContainer}>
+        <View style={styles.measurementHeader}>
+          <Text style={styles.dateText}>
+            {date.toLocaleDateString('ru-RU', { 
+              day: '2-digit',
+              month: 'long',
+              year: 'numeric',
+            })}
+          </Text>
+          <Text style={styles.timeText}>
+            {date.toLocaleTimeString('ru-RU', { 
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </Text>
+        </View>
+        
+        <View style={styles.measurementData}>
+          <View style={styles.dataColumn}>
+            <Text style={[styles.value, { color: statusColor }]}>{item.systolic}/{item.diastolic}</Text>
+            <Text style={styles.label}>мм рт. ст.</Text>
+          </View>
+          <View style={[styles.dataColumn, styles.pulseColumn]}>
+            <Text style={styles.value}>{item.pulse}</Text>
+            <Text style={styles.label}>уд/мин</Text>
+          </View>
+        </View>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
       {measurements.length === 0 ? (
-        <Text style={styles.emptyText}>История измерений пуста.</Text>
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>Нет сохраненных измерений</Text>
+          <Text style={styles.emptySubtext}>Добавьте ваше первое измерение</Text>
+        </View>
       ) : (
         <FlatList
           data={measurements}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContentContainer}
+          contentContainerStyle={styles.listContent}
         />
       )}
-      <TouchableOpacity style={styles.fab} onPress={() => router.push('/form')} accessibilityLabel="Добавить новое измерение">
+      
+      <TouchableOpacity 
+        style={styles.fab}
+        onPress={() => router.push('/form')}
+      >
         <Ionicons name="add" size={24} color="white" />
       </TouchableOpacity>
     </View>
@@ -51,66 +89,95 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  // Existing styles will be updated below, and new styles for FAB will be added
   container: {
     flex: 1,
-    backgroundColor: '#F0F2F5', // Новый цвет фона как на дизайне
-    paddingHorizontal: 16, // Горизонтальный padding
-    paddingTop: 20, // Верхний padding
+    backgroundColor: '#f5f5f5',
   },
-  listContentContainer: {
-    paddingBottom: 80, // Увеличиваем отступ снизу, чтобы FAB не перекрывал последний элемент
+  listContent: {
+    padding: 16,
   },
   itemContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
     padding: 16,
     marginBottom: 16,
-    borderRadius: 12,
-    shadowColor: '#000000',
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  measurementHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 12,
   },
   dateText: {
-    fontSize: 14,
-    color: '#6B7280', // Серый цвет для даты
-    marginBottom: 8,
-    fontWeight: 'normal',
+    fontSize: 15,
+    color: '#1a1a1a',
+    fontWeight: '500',
   },
-  measurementText: {
-    fontSize: 16,
-    color: '#1F2937', // Темный цвет для основного текста
-    marginBottom: 6,
-    lineHeight: 24,
+  timeText: {
+    fontSize: 15,
+    color: '#666',
+  },
+  measurementData: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+  },
+  dataColumn: {
+    flex: 1,
+  },
+  pulseColumn: {
+    alignItems: 'flex-end',
+  },
+  value: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#1a1a1a',
+    marginBottom: 2,
+  },
+  label: {
+    fontSize: 13,
+    color: '#666',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
   },
   emptyText: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#1a1a1a',
+    marginBottom: 8,
+  },
+  emptySubtext: {
+    fontSize: 15,
+    color: '#666',
     textAlign: 'center',
-    marginTop: 80,
-    fontSize: 18,
-    color: '#6B7280',
   },
   fab: {
     position: 'absolute',
-    margin: 16,
     right: 16,
     bottom: 16,
-    backgroundColor: '#6366F1', // Фиолетовый цвет для FAB, можно подобрать точнее
     width: 56,
     height: 56,
     borderRadius: 28,
+    backgroundColor: '#007AFF',
     justifyContent: 'center',
     alignItems: 'center',
-    elevation: 8, // Тень для Android
-    shadowColor: '#000',
+    shadowColor: '#007AFF',
     shadowOffset: {
       width: 0,
       height: 4,
     },
-    shadowOpacity: 0.30,
-    shadowRadius: 4.65,
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
 });
