@@ -1,13 +1,12 @@
-import { Ionicons } from '@expo/vector-icons'; // Предполагаем, что Ionicons доступны
-import { useFocusEffect, useRouter } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
+import Footer from '../src/components/Footer';
 import { getMeasurements } from '../src/services/storageService';
 import { Measurement } from '../src/types';
 
 export default function HistoryScreen() {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
-  const router = useRouter();
 
   const loadMeasurements = async () => {
     const data = await getMeasurements();
@@ -32,21 +31,21 @@ export default function HistoryScreen() {
   );
 
   return (
-    <View style={styles.container}>
-      {measurements.length === 0 ? (
-        <Text style={styles.emptyText}>История измерений пуста.</Text>
-      ) : (
-        <FlatList
-          data={measurements}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.listContentContainer}
-        />
-      )}
-      <TouchableOpacity style={styles.fab} onPress={() => router.push('/form')} accessibilityLabel="Добавить новое измерение">
-        <Ionicons name="add" size={24} color="white" />
-      </TouchableOpacity>
-    </View>
+    <>
+      <View style={styles.container}>
+        {measurements.length === 0 ? (
+          <Text style={styles.emptyText}>История измерений пуста.</Text>
+        ) : (
+          <FlatList
+            data={measurements}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.listContentContainer}
+          />
+        )}
+      </View>
+      <Footer />
+    </>
   );
 }
 
@@ -57,9 +56,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F2F5', // Новый цвет фона как на дизайне
     paddingHorizontal: 16, // Горизонтальный padding
     paddingTop: 20, // Верхний padding
+    paddingBottom: 0, // Убираем нижний padding, так как теперь есть футер
   },
   listContentContainer: {
-    paddingBottom: 80, // Увеличиваем отступ снизу, чтобы FAB не перекрывал последний элемент
+    paddingBottom: 16, // Уменьшаем отступ снизу, так как теперь используем футер вместо FAB
   },
   itemContainer: {
     backgroundColor: '#FFFFFF',
@@ -93,24 +93,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#6B7280',
   },
-  fab: {
-    position: 'absolute',
-    margin: 16,
-    right: 16,
-    bottom: 16,
-    backgroundColor: '#6366F1', // Фиолетовый цвет для FAB, можно подобрать точнее
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 8, // Тень для Android
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
-    },
-    shadowOpacity: 0.30,
-    shadowRadius: 4.65,
-  },
+  // Стиль FAB удален, так как теперь используется компонент Footer
 });

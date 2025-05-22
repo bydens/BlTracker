@@ -1,13 +1,12 @@
-import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import Footer from '../src/components/Footer';
 import { saveMeasurement } from '../src/services/storageService';
 
 export default function LogPressureScreen() {
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [pulse, setPulse] = useState('');
-  const router = useRouter();
 
   const handleSaveMeasurement = async () => {
     if (!systolic || !diastolic || !pulse) {
@@ -39,44 +38,40 @@ export default function LogPressureScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>Систолическое давление (мм рт. ст.):</Text>
-      <TextInput
-        style={styles.input}
-        value={systolic}
-        onChangeText={setSystolic}
-        keyboardType="number-pad"
-        placeholder="120"
-        accessibilityLabel="Поле ввода систолического давления"
-      />
+    <>
+      <View style={styles.container}>
+        <Text style={styles.label}>Систолическое давление (мм рт. ст.):</Text>
+        <TextInput
+          style={styles.input}
+          value={systolic}
+          onChangeText={setSystolic}
+          keyboardType="number-pad"
+          placeholder="120"
+          accessibilityLabel="Поле ввода систолического давления"
+        />
 
-      <Text style={styles.label}>Диастолическое давление (мм рт. ст.):</Text>
-      <TextInput
-        style={styles.input}
-        value={diastolic}
-        onChangeText={setDiastolic}
-        keyboardType="number-pad"
-        placeholder="80"
-        accessibilityLabel="Поле ввода диастолического давления"
-      />
+        <Text style={styles.label}>Диастолическое давление (мм рт. ст.):</Text>
+        <TextInput
+          style={styles.input}
+          value={diastolic}
+          onChangeText={setDiastolic}
+          keyboardType="number-pad"
+          placeholder="80"
+          accessibilityLabel="Поле ввода диастолического давления"
+        />
 
-      <Text style={styles.label}>Пульс (уд/мин):</Text>
-      <TextInput
-        style={styles.input}
-        value={pulse}
-        onChangeText={setPulse}
-        keyboardType="number-pad"
-        placeholder="60"
-        accessibilityLabel="Поле ввода пульса"
-      />
-
-      <TouchableOpacity style={styles.button} onPress={handleSaveMeasurement} accessibilityLabel="Кнопка Сохранить измерение">
-        <Text style={styles.buttonText}>Сохранить измерение</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={() => router.push('/history')} accessibilityLabel="Кнопка Перейти к истории">
-        <Text style={[styles.buttonText, styles.secondaryButtonText]}>Перейти к истории</Text>
-      </TouchableOpacity>
-    </View>
+        <Text style={styles.label}>Пульс (уд/мин):</Text>
+        <TextInput
+          style={styles.input}
+          value={pulse}
+          onChangeText={setPulse}
+          keyboardType="number-pad"
+          placeholder="60"
+          accessibilityLabel="Поле ввода пульса"
+        />
+      </View>
+      <Footer showSaveButton={true} onSave={handleSaveMeasurement} />
+    </>
   );
 }
 
@@ -85,7 +80,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingVertical: 32,
+    paddingTop: 32,
+    paddingBottom: 0,
     backgroundColor: '#F0F2F5', // Новый цвет фона
   },
   label: {
@@ -105,33 +101,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1F2937',
   },
-  button: {
-    backgroundColor: '#6366F1', // Фиолетовый цвет кнопки
-    paddingVertical: 16,
-    borderRadius: 10,
-    alignItems: 'center',
-    marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  buttonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  secondaryButton: {
-    backgroundColor: '#FFFFFF',
-    borderColor: '#6366F1',
-    borderWidth: 1,
-  },
-  secondaryButtonText: {
-    color: '#6366F1',
-  },
-  // linkContainer будет удален, так как кнопки теперь стилизованы индивидуально
+  // Стили кнопок перемещены в компонент Footer
 });
