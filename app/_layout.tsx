@@ -23,12 +23,14 @@ export default function RootLayout() {
         name="form" 
         options={{
           title: 'Добавить измерение',
+          headerLeft: () => null, // Это должно надежно убрать кнопку "назад"
         }}
       />
       <Stack.Screen 
         name="history" 
         options={{
           title: 'История измерений',
+          headerLeft: () => null, // Это должно надежно убрать кнопку "назад"
         }}
       />
     </Stack>
