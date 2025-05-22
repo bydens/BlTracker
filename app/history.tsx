@@ -52,37 +52,48 @@ export default function HistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    padding: 24, // Increased padding
+    backgroundColor: '#f7f7f7', // Softer background color
   },
   listContentContainer: {
-    paddingBottom: 20, // Ensure last item is not hidden by button
+    paddingBottom: 24, // Increased padding
   },
   itemContainer: {
-    backgroundColor: '#f9f9f9',
-    padding: 15,
-    marginBottom: 10,
-    borderRadius: 8,
+    backgroundColor: '#fff',
+    padding: 18, // Increased padding
+    marginBottom: 12, // Increased margin
+    borderRadius: 10, // More rounded corners
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#e0e0e0', // Slightly darker, more defined border
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.05, // Softer shadow
+    shadowRadius: 2.00,
+    elevation: 2, // Subtle elevation for Android
   },
   dateText: {
     fontSize: 14,
-    color: '#666',
-    marginBottom: 5,
+    color: '#555', // Darker gray for better contrast
+    marginBottom: 6,
+    fontWeight: '500',
   },
   measurementText: {
     fontSize: 16,
-    marginBottom: 3,
+    color: '#333', // Darker text color
+    marginBottom: 4,
+    lineHeight: 22, // Improved line height
   },
   emptyText: {
     textAlign: 'center',
-    marginTop: 50,
+    marginTop: 60, // Increased margin
     fontSize: 18,
-    color: '#888',
+    color: '#777', // Slightly darker for better readability
   },
   buttonContainer: {
-    marginTop: 20,
-    marginBottom: 10, // Add some space at the bottom
+    marginTop: 24, // Increased top margin
+    marginBottom: 15, // Increased bottom margin
   },
 });

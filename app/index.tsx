@@ -81,22 +81,31 @@ export default function LogPressureScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
+    padding: 24, // Increased padding
+    backgroundColor: '#f7f7f7', // Softer background color
   },
   label: {
     fontSize: 16,
-    marginBottom: 8,
+    fontWeight: '500', // Slightly bolder
+    color: '#333',
+    marginBottom: 10, // Increased margin
   },
   input: {
+    backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    marginBottom: 20,
-    borderRadius: 5,
+    borderColor: '#ddd', // Lighter border
+    paddingVertical: 12, // Increased vertical padding
+    paddingHorizontal: 15, // Increased horizontal padding
+    marginBottom: 24, // Increased margin
+    borderRadius: 8, // More rounded corners
     fontSize: 16,
+    color: '#333',
+  },
+  buttonWrapper: { // Wrapper for button styling
+    marginBottom: 15, // Space between buttons
   },
   linkContainer: {
-    marginTop: 20,
+    marginTop: 25, // Increased top margin
+    alignItems: 'center', // Center the button if it's a single link
   },
 });
