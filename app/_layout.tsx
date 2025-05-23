@@ -4,33 +4,25 @@ export default function RootLayout() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: {
-          backgroundColor: '#F0F2F5', // Новый цвет фона заголовка
-        },
-        headerTintColor: '#1F2937', // Новый цвет текста заголовка
-        headerTitleStyle: {
-          fontWeight: 'bold', // Сделаем шрифт заголовка жирным
-        },
+        headerShown: false, // Hide all headers for modern design
       }}
     >
       <Stack.Screen 
         name="index" 
         options={{
-          headerShown: false, // Скрываем заголовок для приветственного экрана
+          headerShown: false,
         }}
       />
       <Stack.Screen 
         name="form" 
         options={{
-          title: 'Добавить измерение',
-          headerLeft: () => null, // Это должно надежно убрать кнопку "назад"
+          headerShown: false,
         }}
       />
       <Stack.Screen 
         name="history" 
         options={{
-          title: 'История измерений',
-          headerLeft: () => null, // Это должно надежно убрать кнопку "назад"
+          headerShown: false,
         }}
       />
     </Stack>

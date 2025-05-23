@@ -1,7 +1,7 @@
+import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { SvgXml } from 'react-native-svg'; // Предполагаем, что react-native-svg установлен
+import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 // SVG-код для линии пульса
 const heartbeatSvg = `
@@ -19,20 +19,30 @@ export default function WelcomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Добро пожаловать!</Text>
-      <View style={styles.svgContainer}>
-        <SvgXml xml={heartbeatSvg} width="150" height="100" />
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      
+      <View style={styles.content}>
+        <View style={styles.illustrationContainer}>
+          <View style={styles.illustration}>
+            <Ionicons name="heart-outline" size={80} color="#007AFF" />
+          </View>
+        </View>
+        
+        <View style={styles.textContainer}>
+          <Text style={styles.title}>Welcome to BlTracker</Text>
+          <Text style={styles.subtitle}>
+            Track your blood pressure measurements and monitor your health progress.
+          </Text>
+        </View>
+        
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={handleContinue}
+          accessibilityLabel="Get Started"
+        >
+          <Text style={styles.buttonText}>Get Started</Text>
+        </TouchableOpacity>
       </View>
-      <Text style={styles.subtitle}>
-        Это приложение поможет вам отслеживать ваше артериальное давление.
-      </Text>
-      <TouchableOpacity 
-        style={styles.button}
-        onPress={handleContinue}
-        accessibilityLabel="Кнопка Продолжить"
-      >
-        <Text style={styles.buttonText}>Продолжить</Text>
-      </TouchableOpacity>
     </View>
   );
 }
@@ -40,49 +50,55 @@ export default function WelcomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  content: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F0F2F5',
-    paddingHorizontal: 24,
+    paddingHorizontal: 32,
+    paddingVertical: 64,
+  },
+  illustrationContainer: {
+    marginBottom: 48,
+  },
+  illustration: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#F8F9FE',
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textContainer: {
+    alignItems: 'center',
+    marginBottom: 48,
   },
   title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#1F2937',
-    marginBottom: 20,
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 16,
     textAlign: 'center',
-  },
-  svgContainer: {
-    marginBottom: 30,
-    alignItems: 'center',
   },
   subtitle: {
-    fontSize: 18,
-    color: '#4B5563',
+    fontSize: 16,
+    color: '#6B7280',
     textAlign: 'center',
-    marginBottom: 40,
-    lineHeight: 26,
+    lineHeight: 22,
+    paddingHorizontal: 16,
   },
   button: {
-    backgroundColor: '#6366F1',
+    backgroundColor: '#007AFF',
     paddingVertical: 16,
-    paddingHorizontal: 32,
-    borderRadius: 10,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-    width: '100%',
-    maxWidth: 300,
+    paddingHorizontal: 48,
+    borderRadius: 12,
+    minWidth: 200,
   },
   buttonText: {
     color: '#FFFFFF',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
   },
 });

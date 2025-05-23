@@ -1,5 +1,6 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Footer from '../src/components/Footer';
 import { saveMeasurement } from '../src/services/storageService';
 
@@ -38,8 +39,35 @@ export default function LogPressureScreen() {
   };
 
   return (
-    <>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      
+      {/* Navigation Bar */}
+      <View style={styles.navBar}>
+        <View style={styles.navBarContent}>
+          <Text style={styles.navTitle}>Add Measurement</Text>
+          <TouchableOpacity style={styles.searchButton}>
+            <Ionicons name="search" size={24} color="#007AFF" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Content Switcher */}
+      <View style={styles.contentSwitcher}>
+        <TouchableOpacity style={[styles.switcherTab, styles.inactiveTab]}>
+          <Text style={styles.inactiveTabText}>To do</Text>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+        <TouchableOpacity style={[styles.switcherTab, styles.inactiveTab]}>
+          <Text style={styles.inactiveTabText}>In progress</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.switcherTab, styles.activeTab]}>
+          <Text style={styles.activeTabText}>Finished</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Form Content */}
+      <View style={styles.formContainer}>
         <Text style={styles.label}>Систолическое давление (мм рт. ст.):</Text>
         <TextInput
           style={styles.input}
@@ -70,36 +98,91 @@ export default function LogPressureScreen() {
           accessibilityLabel="Поле ввода пульса"
         />
       </View>
+      
       <Footer showSaveButton={true} onSave={handleSaveMeasurement} />
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // Existing styles will be updated below
   container: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingTop: 32,
-    paddingBottom: 0,
-    backgroundColor: '#F0F2F5', // Новый цвет фона
+    backgroundColor: '#FFFFFF',
+  },
+  navBar: {
+    backgroundColor: '#FFFFFF',
+    paddingTop: 44, // Status bar height
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+  },
+  navBarContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  navTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  searchButton: {
+    padding: 4,
+  },
+  contentSwitcher: {
+    flexDirection: 'row',
+    backgroundColor: '#F8F9FE',
+    marginHorizontal: 16,
+    marginBottom: 24,
+    borderRadius: 16,
+    padding: 4,
+  },
+  switcherTab: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  activeTab: {
+    backgroundColor: '#FFFFFF',
+  },
+  inactiveTab: {
+    backgroundColor: 'transparent',
+  },
+  activeTabText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#000000',
+  },
+  inactiveTabText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  divider: {
+    width: 1,
+    backgroundColor: '#E5E7EB',
+    marginVertical: 8,
+  },
+  formContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#1F2937', // Темный цвет для заголовков
+    color: '#1F2937',
     marginBottom: 8,
   },
   input: {
     backgroundColor: '#FFFFFF',
     borderWidth: 1,
-    borderColor: '#D1D5DB', // Светло-серый бордер
+    borderColor: '#D1D5DB',
     paddingVertical: 14,
     paddingHorizontal: 16,
     marginBottom: 20,
-    borderRadius: 10,
+    borderRadius: 12,
     fontSize: 16,
     color: '#1F2937',
   },
-  // Стили кнопок перемещены в компонент Footer
 });

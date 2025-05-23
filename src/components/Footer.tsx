@@ -23,27 +23,44 @@ export default function Footer({ showSaveButton = false, onSave }: FooterProps) 
           onPress={onSave}
           accessibilityLabel="Сохранить измерение"
         >
-          <Text style={styles.primaryButtonText}>Сохранить измерение</Text>
+          <Text style={styles.primaryButtonText}>Start a project</Text>
         </TouchableOpacity>
       ) : null}
       
-      <View style={styles.navButtons}>
+      <View style={styles.tabBar}>
         <TouchableOpacity 
-          style={[styles.navButton, isFormActive && styles.activeNavButton]} 
+          style={styles.tabItem} 
           onPress={() => router.push('/form')}
-          accessibilityLabel="Добавить измерение"
+          accessibilityLabel="Explore"
         >
-          <Ionicons name="add-circle-outline" size={24} color={isFormActive ? '#6366F1' : '#6B7280'} />
-          <Text style={[styles.navButtonText, isFormActive && styles.activeNavButtonText]}>Добавить</Text>
+          <Ionicons name="compass-outline" size={24} color={isFormActive ? '#007AFF' : '#8E8E93'} />
+          <Text style={[styles.tabText, isFormActive && styles.activeTabText]}>Explore</Text>
         </TouchableOpacity>
         
         <TouchableOpacity 
-          style={[styles.navButton, isHistoryActive && styles.activeNavButton]} 
-          onPress={() => router.push('/history')}
-          accessibilityLabel="История измерений"
+          style={styles.tabItem} 
+          onPress={() => router.push('/form')}
+          accessibilityLabel="Projects"
         >
-          <Ionicons name="list-outline" size={24} color={isHistoryActive ? '#6366F1' : '#6B7280'} />
-          <Text style={[styles.navButtonText, isHistoryActive && styles.activeNavButtonText]}>История</Text>
+          <Ionicons name="folder-outline" size={24} color={isFormActive ? '#007AFF' : '#000000'} />
+          <Text style={[styles.tabText, { color: '#000000', fontWeight: '600' }]}>Projects</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.tabItem} 
+          onPress={() => router.push('/history')}
+          accessibilityLabel="Inbox"
+        >
+          <Ionicons name="mail-outline" size={24} color={isHistoryActive ? '#007AFF' : '#8E8E93'} />
+          <Text style={[styles.tabText, isHistoryActive && styles.activeTabText]}>Inbox</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={styles.tabItem} 
+          accessibilityLabel="Profile"
+        >
+          <Ionicons name="person-outline" size={24} color="#8E8E93" />
+          <Text style={styles.tabText}>Profile</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -54,53 +71,46 @@ const styles = StyleSheet.create({
   footer: {
     backgroundColor: '#FFFFFF',
     paddingTop: 12,
-    paddingBottom: 24, // Увеличенный отступ снизу для устройств с закругленными краями
+    paddingBottom: 34, // Safe area for devices with home indicator
     paddingHorizontal: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#E5E7EB',
     width: '100%',
   },
   button: {
-    paddingVertical: 14,
-    borderRadius: 10,
+    paddingVertical: 16,
+    borderRadius: 12,
     alignItems: 'center',
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    marginHorizontal: 16,
   },
   primaryButton: {
-    backgroundColor: '#6366F1',
+    backgroundColor: '#007AFF',
   },
   primaryButtonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
   },
-  navButtons: {
+  tabBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-  },
-  navButton: {
-    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
     paddingVertical: 8,
-    paddingHorizontal: 16,
   },
-  activeNavButton: {
-    // Можно добавить стили для активной кнопки, если нужно
+  tabItem: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    minWidth: 60,
   },
-  navButtonText: {
-    fontSize: 14,
-    color: '#6B7280',
+  tabText: {
+    fontSize: 10,
+    color: '#8E8E93',
     marginTop: 4,
+    textAlign: 'center',
   },
-  activeNavButtonText: {
-    color: '#6366F1',
-    fontWeight: '500',
+  activeTabText: {
+    color: '#007AFF',
+    fontWeight: '600',
   },
 });

@@ -1,6 +1,7 @@
-import { useFocusEffect } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Footer from '../src/components/Footer';
 import { getMeasurements } from '../src/services/storageService';
 import { Measurement } from '../src/types';
@@ -31,10 +32,47 @@ export default function HistoryScreen() {
   );
 
   return (
-    <>
-      <View style={styles.container}>
+    <View style={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+      
+      {/* Navigation Bar */}
+      <View style={styles.navBar}>
+        <View style={styles.navBarContent}>
+          <Text style={styles.navTitle}>Projects</Text>
+          <TouchableOpacity style={styles.searchButton}>
+            <Ionicons name="search" size={24} color="#007AFF" />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Content Switcher */}
+      <View style={styles.contentSwitcher}>
+        <TouchableOpacity style={[styles.switcherTab, styles.inactiveTab]}>
+          <Text style={styles.inactiveTabText}>To do</Text>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+        <TouchableOpacity style={[styles.switcherTab, styles.inactiveTab]}>
+          <Text style={styles.inactiveTabText}>In progress</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.switcherTab, styles.activeTab]}>
+          <Text style={styles.activeTabText}>Finished</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Content */}
+      <View style={styles.contentContainer}>
         {measurements.length === 0 ? (
-          <Text style={styles.emptyText}>История измерений пуста.</Text>
+          <View style={styles.emptyState}>
+            <View style={styles.emptyImageContainer}>
+              <View style={styles.emptyImage}>
+                <Ionicons name="document-outline" size={80} color="#E5E7EB" />
+              </View>
+            </View>
+            <View style={styles.emptyTextContainer}>
+              <Text style={styles.emptyTitle}>Nothing here. For now.</Text>
+              <Text style={styles.emptySubtitle}>This is where you'll find your finished projects.</Text>
+            </View>
+          </View>
         ) : (
           <FlatList
             data={measurements}
@@ -44,54 +82,128 @@ export default function HistoryScreen() {
           />
         )}
       </View>
+      
       <Footer />
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  // Existing styles will be updated below, and new styles for FAB will be added
   container: {
     flex: 1,
-    backgroundColor: '#F0F2F5', // Новый цвет фона как на дизайне
-    paddingHorizontal: 16, // Горизонтальный padding
-    paddingTop: 20, // Верхний padding
-    paddingBottom: 0, // Убираем нижний padding, так как теперь есть футер
+    backgroundColor: '#FFFFFF',
   },
-  listContentContainer: {
-    paddingBottom: 16, // Уменьшаем отступ снизу, так как теперь используем футер вместо FAB
+  navBar: {
+    backgroundColor: '#FFFFFF',
+    paddingTop: 44, // Status bar height
+    paddingBottom: 16,
+    paddingHorizontal: 16,
+  },
+  navBarContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  navTitle: {
+    fontSize: 17,
+    fontWeight: '600',
+    color: '#000000',
+  },
+  searchButton: {
+    padding: 4,
+  },
+  contentSwitcher: {
+    flexDirection: 'row',
+    backgroundColor: '#F8F9FE',
+    marginHorizontal: 16,
+    marginBottom: 24,
+    borderRadius: 16,
+    padding: 4,
+  },
+  switcherTab: {
+    flex: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  activeTab: {
+    backgroundColor: '#FFFFFF',
+  },
+  inactiveTab: {
+    backgroundColor: 'transparent',
+  },
+  activeTabText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#000000',
+  },
+  inactiveTabText: {
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#6B7280',
+  },
+  divider: {
+    width: 1,
+    backgroundColor: '#E5E7EB',
+    marginVertical: 8,
+  },
+  contentContainer: {
+    flex: 1,
+    paddingHorizontal: 16,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  emptyImageContainer: {
+    marginBottom: 32,
+  },
+  emptyImage: {
+    width: 120,
+    height: 120,
+    backgroundColor: '#F8F9FE',
+    borderRadius: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyTextContainer: {
+    alignItems: 'center',
+  },
+  emptyTitle: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#000000',
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  emptySubtitle: {
+    fontSize: 16,
+    color: '#6B7280',
+    textAlign: 'center',
+    lineHeight: 22,
   },
   itemContainer: {
     backgroundColor: '#FFFFFF',
     padding: 16,
-    marginBottom: 16,
+    marginBottom: 12,
     borderRadius: 12,
-    shadowColor: '#000000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    borderWidth: 1,
+    borderColor: '#E5E7EB',
   },
   dateText: {
     fontSize: 14,
-    color: '#6B7280', // Серый цвет для даты
+    color: '#6B7280',
     marginBottom: 8,
-    fontWeight: 'normal',
   },
   measurementText: {
     fontSize: 16,
-    color: '#1F2937', // Темный цвет для основного текста
-    marginBottom: 6,
-    lineHeight: 24,
+    color: '#1F2937',
+    marginBottom: 4,
   },
-  emptyText: {
-    textAlign: 'center',
-    marginTop: 80,
-    fontSize: 18,
-    color: '#6B7280',
+  listContentContainer: {
+    paddingBottom: 20,
   },
-  // Стиль FAB удален, так как теперь используется компонент Footer
 });
