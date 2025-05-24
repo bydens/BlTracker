@@ -1,6 +1,5 @@
-import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
-import { Alert, StatusBar, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import Footer from '../src/components/Footer';
 import { saveMeasurement } from '../src/services/storageService';
 
@@ -44,16 +43,13 @@ export default function LogPressureScreen() {
       
       {/* Navigation Bar */}
       <View style={styles.navBar}>
-        <View style={styles.navBarContent}>
+        <View style={styles.navTitleContainer}>
           <Text style={styles.navTitle}>Add Measurement</Text>
-          <TouchableOpacity style={styles.searchButton}>
-            <Ionicons name="search" size={24} color="#007AFF" />
-          </TouchableOpacity>
         </View>
       </View>
 
       {/* Content Switcher */}
-      <View style={styles.contentSwitcher}>
+      {/* <View style={styles.contentSwitcher}>
         <TouchableOpacity style={[styles.switcherTab, styles.inactiveTab]}>
           <Text style={styles.inactiveTabText}>To do</Text>
         </TouchableOpacity>
@@ -64,7 +60,7 @@ export default function LogPressureScreen() {
         <TouchableOpacity style={[styles.switcherTab, styles.activeTab]}>
           <Text style={styles.activeTabText}>Finished</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
 
       {/* Form Content */}
       <View style={styles.formContainer}>
@@ -110,10 +106,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   navBar: {
-    backgroundColor: '#FFFFFF',
-    paddingTop: 44, // Status bar height
-    paddingBottom: 16,
-    paddingHorizontal: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between', // Distributes space: left icon, title, right placeholder
+    backgroundColor: '#FFFFFF', // fill_RL25A2
+    height: 56, // layout_6X9PSO height
+    paddingHorizontal: 16, // Standard padding, Figma node has 24 for left icon
+    marginBottom: 12, // layout_6X9PSO bottom padding
+    marginTop: 12, // layout_6X9PSO top padding
   },
   navBarContent: {
     flexDirection: 'row',
@@ -121,12 +121,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   navTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#000000',
+    // fontFamily: 'Inter', // style_WGZGFU
+    fontWeight: '700', // style_WGZGFU
+    fontSize: 16, // style_WGZGFU
+    color: '#1F2024', // fill_XDLNSA
+    textAlign: 'center', // Actual text alignment within the Text component
   },
-  searchButton: {
-    padding: 4,
+  navTitleContainer: {
+    flex: 1, // Allows the title to take up available space for centering
+    alignItems: 'center', // Centers the Text component horizontally
+    justifyContent: 'center', // Centers the Text component vertically if navBar has extra height
   },
   contentSwitcher: {
     flexDirection: 'row',

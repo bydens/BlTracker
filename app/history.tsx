@@ -6,8 +6,11 @@ import Footer from '../src/components/Footer';
 import { getMeasurements } from '../src/services/storageService';
 import { Measurement } from '../src/types';
 
+import { useRouter } from 'expo-router';
+
 export default function HistoryScreen() {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
+  const router = useRouter();
 
   const loadMeasurements = async () => {
     const data = await getMeasurements();
@@ -34,32 +37,16 @@ export default function HistoryScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-      
-      {/* Navigation Bar */}
       <View style={styles.navBar}>
-        <View style={styles.navBarContent}>
-          <Text style={styles.navTitle}>Projects</Text>
-          <TouchableOpacity style={styles.searchButton}>
-            <Ionicons name="search" size={24} color="#007AFF" />
-          </TouchableOpacity>
+        <TouchableOpacity style={styles.backButton} onPress={() => router.canGoBack() ? router.back() : router.replace('/form')}>
+          <Ionicons name="arrow-back" size={24} color="#006FFD" />
+        </TouchableOpacity>
+        <View style={styles.navTitleContainer}>
+          <Text style={styles.navTitle}>History</Text>
         </View>
+        {/* Placeholder for potential right-side control, not in current Figma node */}
+        <View style={styles.navBarRightPlaceholder} />
       </View>
-
-      {/* Content Switcher */}
-      <View style={styles.contentSwitcher}>
-        <TouchableOpacity style={[styles.switcherTab, styles.inactiveTab]}>
-          <Text style={styles.inactiveTabText}>To do</Text>
-        </TouchableOpacity>
-        <View style={styles.divider} />
-        <TouchableOpacity style={[styles.switcherTab, styles.inactiveTab]}>
-          <Text style={styles.inactiveTabText}>In progress</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.switcherTab, styles.activeTab]}>
-          <Text style={styles.activeTabText}>Finished</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Content */}
       <View style={styles.contentContainer}>
         {measurements.length === 0 ? (
           <View style={styles.emptyState}>
@@ -82,7 +69,6 @@ export default function HistoryScreen() {
           />
         )}
       </View>
-      
       <Footer />
     </View>
   );
@@ -94,55 +80,72 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
   },
   navBar: {
-    backgroundColor: '#FFFFFF',
-    paddingTop: 44, // Status bar height
-    paddingBottom: 16,
-    paddingHorizontal: 16,
-  },
-  navBarContent: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between', // Distributes space: left icon, title, right placeholder
+    backgroundColor: '#FFFFFF', // fill_RL25A2
+    height: 56, // layout_6X9PSO height
+    paddingHorizontal: 16, // Standard padding, Figma node has 24 for left icon
+    marginBottom: 12, // layout_6X9PSO bottom padding
+    marginTop: 12, // layout_6X9PSO top padding
+    // paddingTop is handled by StatusBar component or SafeAreaView if used
+  },
+  navTitleContainer: {
+    flex: 1, // Allows the title to take up available space for centering
+    alignItems: 'center', // Centers the Text component horizontally
+    justifyContent: 'center', // Centers the Text component vertically if navBar has extra height
   },
   navTitle: {
-    fontSize: 17,
-    fontWeight: '600',
-    color: '#000000',
+    // fontFamily: 'Inter', // style_WGZGFU
+    fontWeight: '700', // style_WGZGFU
+    fontSize: 16, // style_WGZGFU
+    color: '#1F2024', // fill_XDLNSA
+    textAlign: 'center', // Actual text alignment within the Text component
   },
-  searchButton: {
-    padding: 4,
+  backButton: {
+    // Corresponds to Left Button in Figma
+    // Figma: x: 24, y: 18, width: 20, height: 20
+    // Applying padding to make the touch target larger
+    padding: 8, // Increased touch target
+    // position: 'absolute', // Removed to allow flex layout to manage positioning
+    // left: 16, // No longer needed with flex layout
+    zIndex: 1, // Ensure back button is tappable if title overlaps
   },
-  contentSwitcher: {
-    flexDirection: 'row',
-    backgroundColor: '#F8F9FE',
-    marginHorizontal: 16,
-    marginBottom: 24,
-    borderRadius: 16,
-    padding: 4,
+  navBarRightPlaceholder: {
+    width: 24 + 8 + 8, // Width of an icon (24) + padding of backButton (8+8 for horizontal)
+    // This ensures the placeholder has the same effective width as the backButton for centering the title.
   },
-  switcherTab: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  activeTab: {
-    backgroundColor: '#FFFFFF',
-  },
-  inactiveTab: {
-    backgroundColor: 'transparent',
-  },
-  activeTabText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#000000',
-  },
-  inactiveTabText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6B7280',
-  },
+  // contentSwitcher: {
+  //   flexDirection: 'row',
+  //   backgroundColor: '#F8F9FE',
+  //   marginHorizontal: 16,
+  //   marginBottom: 24,
+  //   borderRadius: 16,
+  //   padding: 4,
+  // },
+  // switcherTab: {
+  //   flex: 1,
+  //   paddingVertical: 8,
+  //   paddingHorizontal: 12,
+  //   borderRadius: 12,
+  //   alignItems: 'center',
+  // },
+  // activeTab: {
+  //   backgroundColor: '#FFFFFF',
+  // },
+  // inactiveTab: {
+  //   backgroundColor: 'transparent',
+  // },
+  // activeTabText: {
+  //   fontSize: 14,
+  //   fontWeight: '500',
+  //   color: '#000000',
+  // },
+  // inactiveTabText: {
+  //   fontSize: 14,
+  //   fontWeight: '500',
+  //   color: '#6B7280',
+  // },
   divider: {
     width: 1,
     backgroundColor: '#E5E7EB',

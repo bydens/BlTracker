@@ -33,35 +33,35 @@ export default function Footer({ showSaveButton = false, onSave }: FooterProps) 
           onPress={() => router.push('/form')}
           accessibilityLabel="Explore"
         >
-          <Ionicons name="compass-outline" size={24} color={isFormActive ? '#007AFF' : '#8E8E93'} />
-          <Text style={[styles.tabText, isFormActive && styles.activeTabText]}>Explore</Text>
+          <Ionicons name="add-circle-outline" size={24} color={isFormActive ? '#007AFF' : '#8E8E93'} />
+          <Text style={[styles.tabText, isFormActive && styles.activeTabText]}>Add</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity 
+        {/* <TouchableOpacity 
           style={styles.tabItem} 
           onPress={() => router.push('/form')}
           accessibilityLabel="Projects"
         >
           <Ionicons name="folder-outline" size={24} color={isFormActive ? '#007AFF' : '#000000'} />
           <Text style={[styles.tabText, { color: '#000000', fontWeight: '600' }]}>Projects</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         
         <TouchableOpacity 
           style={styles.tabItem} 
           onPress={() => router.push('/history')}
           accessibilityLabel="Inbox"
         >
-          <Ionicons name="mail-outline" size={24} color={isHistoryActive ? '#007AFF' : '#8E8E93'} />
-          <Text style={[styles.tabText, isHistoryActive && styles.activeTabText]}>Inbox</Text>
+          <Ionicons name="archive-outline" size={24} color={isHistoryActive ? '#007AFF' : '#8E8E93'} />
+          <Text style={[styles.tabText, isHistoryActive && styles.activeTabText]}>history</Text>
         </TouchableOpacity>
         
-        <TouchableOpacity 
+        {/* <TouchableOpacity 
           style={styles.tabItem} 
           accessibilityLabel="Profile"
         >
           <Ionicons name="person-outline" size={24} color="#8E8E93" />
           <Text style={styles.tabText}>Profile</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
   );
