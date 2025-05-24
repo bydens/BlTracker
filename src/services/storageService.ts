@@ -29,3 +29,14 @@ export const getMeasurements = async (): Promise<Measurement[]> => {
     return [];
   }
 };
+
+export const deleteMeasurement = async (id: string): Promise<void> => {
+  try {
+    const existingMeasurements = await getMeasurements();
+    const updatedMeasurements = existingMeasurements.filter(measurement => measurement.id !== id);
+    await AsyncStorage.setItem(MEASUREMENTS_KEY, JSON.stringify(updatedMeasurements));
+  } catch (error) {
+    console.error('Error deleting measurement:', error);
+    // TODO: Add more robust error handling
+  }
+};

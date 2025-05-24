@@ -40,3 +40,4 @@ alwaysApply: false
   - Utilize Expo's EAS Build and Updates for continuous deployment and Over-The-Air (OTA) updates.
   - Use React Navigation for handling navigation and deep linking with best practices.
       
+Use context7

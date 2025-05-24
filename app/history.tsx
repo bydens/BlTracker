@@ -1,16 +1,17 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { FlatList, StatusBar, StyleSheet, Text, View } from 'react-native'; // Removed TouchableOpacity as it's in Header
+import { Alert, FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Footer from '../src/components/Footer';
-import Header from '../src/components/Header'; // Import the new Header component
-import { getMeasurements } from '../src/services/storageService';
+import Header from '../src/components/Header';
+import { deleteMeasurement, getMeasurements } from '../src/services/storageService';
 import { Measurement } from '../src/types';
 
 // Removed useRouter import as it's handled within Header or not directly needed here anymore
 
 export default function HistoryScreen() {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
+  const [selectedMeasurementId, setSelectedMeasurementId] = useState<string | null>(null);
   // const router = useRouter(); // router instance is now in Header or passed via props if needed
 
   const loadMeasurements = async () => {
@@ -25,13 +26,55 @@ export default function HistoryScreen() {
     }, [])
   );
 
+  const handleDeleteMeasurement = async (id: string) => {
+    await deleteMeasurement(id);
+    // Update local state instead of reloading all measurements
+    setMeasurements(prevMeasurements => 
+      prevMeasurements.filter(measurement => measurement.id !== id)
+    );
+    setSelectedMeasurementId(null);
+  };
+
+  const confirmDelete = (id: string) => {
+    // Check if running on web
+    if (typeof window !== 'undefined' && window.document) {
+      // Use browser's confirm for web
+      if (window.confirm("Are you sure you want to delete this measurement?")) {
+        handleDeleteMeasurement(id);
+      }
+    } else {
+      // Use React Native Alert for native platforms
+      Alert.alert(
+        "Confirm Delete",
+        "Are you sure you want to delete this measurement?",
+        [
+          {
+            text: "Cancel",
+            style: "cancel"
+          },
+          { 
+            text: "Delete", 
+            onPress: () => handleDeleteMeasurement(id),
+            style: "destructive" 
+          }
+        ],
+        { cancelable: true }
+      );
+    }
+  };
+
   const renderItem = ({ item }: { item: Measurement }) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.dateText}>{new Date(item.date).toLocaleString()}</Text>
-      <Text style={styles.measurementText}>
-        Давление: {item.systolic}/{item.diastolic} мм рт. ст.
-      </Text>
-      <Text style={styles.measurementText}>Пульс: {item.pulse} уд/мин</Text>
+      <View style={styles.itemDetailsContainer}>
+        <Text style={styles.dateText}>{new Date(item.date).toLocaleString()}</Text>
+        <Text style={styles.measurementText}>
+          Давление: {item.systolic}/{item.diastolic} мм рт. ст.
+        </Text>
+        <Text style={styles.measurementText}>Пульс: {item.pulse} уд/мин</Text>
+      </View>
+      <TouchableOpacity onPress={() => confirmDelete(item.id)} style={styles.deleteButton}>
+        <Ionicons name="trash-outline" size={24} color="#FF3B30" />
+      </TouchableOpacity>
     </View>
   );
 
@@ -117,6 +160,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     borderWidth: 1,
     borderColor: '#E5E7EB',
+    flexDirection: 'row', // Added for delete button alignment
+    justifyContent: 'space-between', // Added for delete button alignment
+    alignItems: 'center', // Added for delete button alignment
+  },
+  itemDetailsContainer: {
+    flex: 1, // Allows text content to take available space
   },
   dateText: {
     fontSize: 14,
@@ -133,5 +182,8 @@ const styles = StyleSheet.create({
   },
   listContentContainer: {
     paddingBottom: 20,
+  },
+  deleteButton: {
+    padding: 8, // Add some padding for easier touch
   },
 });
