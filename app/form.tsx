@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Alert, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import Footer from '../src/components/Footer';
+import Header from '../src/components/Header'; // Import the new Header component
 import { saveMeasurement } from '../src/services/storageService';
 
 export default function LogPressureScreen() {
@@ -40,13 +41,8 @@ export default function LogPressureScreen() {
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-      
-      {/* Navigation Bar */}
-      <View style={styles.navBar}>
-        <View style={styles.navTitleContainer}>
-          <Text style={styles.navTitle}>Add Measurement</Text>
-        </View>
-      </View>
+      <Header title="Add Measurement" showBackButton={false} />
+      {/* The old navBar View is replaced by the Header component */}
 
       {/* Content Switcher */}
       {/* <View style={styles.contentSwitcher}>
@@ -104,33 +100,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-  },
-  navBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between', // Distributes space: left icon, title, right placeholder
-    backgroundColor: '#FFFFFF', // fill_RL25A2
-    height: 56, // layout_6X9PSO height
-    paddingHorizontal: 16, // Standard padding, Figma node has 24 for left icon
-    marginBottom: 12, // layout_6X9PSO bottom padding
-    marginTop: 12, // layout_6X9PSO top padding
-  },
-  navBarContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  navTitle: {
-    // fontFamily: 'Inter', // style_WGZGFU
-    fontWeight: '700', // style_WGZGFU
-    fontSize: 16, // style_WGZGFU
-    color: '#1F2024', // fill_XDLNSA
-    textAlign: 'center', // Actual text alignment within the Text component
-  },
-  navTitleContainer: {
-    flex: 1, // Allows the title to take up available space for centering
-    alignItems: 'center', // Centers the Text component horizontally
-    justifyContent: 'center', // Centers the Text component vertically if navBar has extra height
   },
   contentSwitcher: {
     flexDirection: 'row',
