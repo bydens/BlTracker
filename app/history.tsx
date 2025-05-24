@@ -55,6 +55,7 @@ export default function HistoryScreen() {
           </View>
         ) : (
           <FlatList
+            style={styles.listStyle} // Added style for FlatList itself
             data={measurements}
             renderItem={renderItem}
             keyExtractor={(item) => item.id}
@@ -131,6 +132,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#1F2937',
     marginBottom: 4,
+  },
+  listStyle: {
+    flex: 1, // Ensures FlatList takes available space
   },
   listContentContainer: {
     paddingBottom: 20,
