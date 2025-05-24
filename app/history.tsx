@@ -1,18 +1,16 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StatusBar, StyleSheet, Text, View } from 'react-native'; 
 import CustomModal from '../src/components/CustomModal';
 import Footer from '../src/components/Footer';
 import Header from '../src/components/Header';
+import MeasurementItem from '../src/components/MeasurementItem';
 import { deleteMeasurement, getMeasurements } from '../src/services/storageService';
 import { Measurement } from '../src/types';
 
-// Removed useRouter import as it's handled within Header or not directly needed here anymore
-
 export default function HistoryScreen() {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
-
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [modalDescription, setModalDescription] = useState('');
@@ -32,14 +30,11 @@ export default function HistoryScreen() {
     setModalButtons([]);
   };
 
-  // const router = useRouter(); // router instance is now in Header or passed via props if needed
-
   const loadMeasurements = async () => {
     const data = await getMeasurements();
     setMeasurements(data);
   };
 
-  // Load measurements when the screen comes into focus
   useFocusEffect(
     React.useCallback(() => {
       loadMeasurements();
@@ -48,7 +43,6 @@ export default function HistoryScreen() {
 
   const handleDeleteMeasurement = async (id: string) => {
     await deleteMeasurement(id);
-    // Update local state instead of reloading all measurements
     setMeasurements(prevMeasurements => 
       prevMeasurements.filter(measurement => measurement.id !== id)
     );
@@ -56,11 +50,11 @@ export default function HistoryScreen() {
 
   const confirmDelete = (id: string) => {
     showModal(
-      'Подтверждение удаления',
-      'Вы уверены, что хотите удалить это измерение?',
+      'Confirm Deletion',
+      'Are you sure you want to delete this measurement?',
       [
-        { text: 'Отмена', style: 'secondary', onPress: hideModal },
-        { text: 'Удалить', style: 'primary', onPress: () => {
+        { text: 'Cancel', style: 'secondary', onPress: hideModal },
+        { text: 'Delete', style: 'primary', onPress: () => {
           handleDeleteMeasurement(id);
           hideModal();
         } },
@@ -68,26 +62,10 @@ export default function HistoryScreen() {
     );
   };
 
-  const renderItem = ({ item }: { item: Measurement }) => (
-    <View style={styles.itemContainer}>
-      <View style={styles.itemDetailsContainer}>
-        <Text style={styles.dateText}>{new Date(item.date).toLocaleString()}</Text>
-        <Text style={styles.measurementText}>
-          Давление: {item.systolic}/{item.diastolic} мм рт. ст.
-        </Text>
-        <Text style={styles.measurementText}>Пульс: {item.pulse} уд/мин</Text>
-      </View>
-      <TouchableOpacity onPress={() => confirmDelete(item.id)} style={styles.deleteButton}>
-        <Ionicons name="trash-outline" size={24} color="#007AFF" />
-      </TouchableOpacity>
-    </View>
-  );
-
   return (
     <View style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
       <Header title="History" showBackButton={true} />
-      {/* The old navBar View is replaced by the Header component */}
       <View style={styles.contentContainer}>
         {measurements.length === 0 ? (
           <View style={styles.emptyState}>
@@ -103,9 +81,9 @@ export default function HistoryScreen() {
           </View>
         ) : (
           <FlatList
-            style={styles.listStyle} // Added style for FlatList itself
+            style={styles.listStyle}
             data={measurements}
-            renderItem={renderItem}
+            renderItem={({ item }) => <MeasurementItem item={item} onDelete={confirmDelete} />}
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContentContainer}
           />
@@ -166,37 +144,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 22,
   },
-  itemContainer: {
-    backgroundColor: '#FFFFFF',
-    padding: 16,
-    marginBottom: 12,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    flexDirection: 'row', // Added for delete button alignment
-    justifyContent: 'space-between', // Added for delete button alignment
-    alignItems: 'center', // Added for delete button alignment
-  },
-  itemDetailsContainer: {
-    flex: 1, // Allows text content to take available space
-  },
-  dateText: {
-    fontSize: 14,
-    color: '#6B7280',
-    marginBottom: 8,
-  },
-  measurementText: {
-    fontSize: 16,
-    color: '#1F2937',
-    marginBottom: 4,
-  },
   listStyle: {
-    flex: 1, // Ensures FlatList takes available space
+    flex: 1,
   },
   listContentContainer: {
     paddingBottom: 20,
-  },
-  deleteButton: {
-    padding: 8, // Add some padding for easier touch
   },
 });
