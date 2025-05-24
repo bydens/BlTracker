@@ -17,7 +17,7 @@ export default function WelcomeScreen() {
       <View style={styles.content}>
         <View style={styles.illustrationContainer}>
           <View style={styles.illustration}>
-            <Ionicons name="heart-outline" size={80} color="#007AFF" />
+            <Ionicons name="pulse-outline" size={80} color="#007AFF" />
           </View>
         </View>
         
@@ -58,8 +58,8 @@ const styles = StyleSheet.create({
   illustration: {
     width: 120,
     height: 120,
-    backgroundColor: '#F8F9FE',
-    borderRadius: 24,
+    // backgroundColor: '#F8F9FE',
+    // borderRadius: 24,
     justifyContent: 'center',
     alignItems: 'center',
   },

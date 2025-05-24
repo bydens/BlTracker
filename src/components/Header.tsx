@@ -28,7 +28,7 @@ const Header: React.FC<HeaderProps> = ({ title, showBackButton = false, onBackPr
       <View style={styles.navBar}>
         {showBackButton ? (
         <TouchableOpacity style={styles.backButton} onPress={handleBack}>
-          <Ionicons name="arrow-back" size={24} color="#006FFD" />
+          <Ionicons name="chevron-back-outline" size={24} color="#006FFD" />
         </TouchableOpacity>
       ) : (
         // Maintain layout balance when back button is not shown

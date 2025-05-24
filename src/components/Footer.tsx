@@ -23,7 +23,7 @@ export default function Footer({ showSaveButton = false, onSave }: FooterProps) 
           onPress={onSave}
           accessibilityLabel="Сохранить измерение"
         >
-          <Text style={styles.primaryButtonText}>Start a project</Text>
+          <Text style={styles.primaryButtonText}>Save a measurement</Text>
         </TouchableOpacity>
       ) : null}
       
