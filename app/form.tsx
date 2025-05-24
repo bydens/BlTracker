@@ -44,20 +44,6 @@ export default function LogPressureScreen() {
       <Header title="Add Measurement" showBackButton={false} />
       {/* The old navBar View is replaced by the Header component */}
 
-      {/* Content Switcher */}
-      {/* <View style={styles.contentSwitcher}>
-        <TouchableOpacity style={[styles.switcherTab, styles.inactiveTab]}>
-          <Text style={styles.inactiveTabText}>To do</Text>
-        </TouchableOpacity>
-        <View style={styles.divider} />
-        <TouchableOpacity style={[styles.switcherTab, styles.inactiveTab]}>
-          <Text style={styles.inactiveTabText}>In progress</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.switcherTab, styles.activeTab]}>
-          <Text style={styles.activeTabText}>Finished</Text>
-        </TouchableOpacity>
-      </View> */}
-
       {/* Form Content */}
       <View style={styles.formContainer}>
         <Text style={styles.label}>Систолическое давление (мм рт. ст.):</Text>
@@ -100,42 +86,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FFFFFF',
-  },
-  contentSwitcher: {
-    flexDirection: 'row',
-    backgroundColor: '#F8F9FE',
-    marginHorizontal: 16,
-    marginBottom: 24,
-    borderRadius: 16,
-    padding: 4,
-  },
-  switcherTab: {
-    flex: 1,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-  },
-  activeTab: {
-    backgroundColor: '#FFFFFF',
-  },
-  inactiveTab: {
-    backgroundColor: 'transparent',
-  },
-  activeTabText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#000000',
-  },
-  inactiveTabText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#6B7280',
-  },
-  divider: {
-    width: 1,
-    backgroundColor: '#E5E7EB',
-    marginVertical: 8,
   },
   formContainer: {
     flex: 1,

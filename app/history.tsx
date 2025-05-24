@@ -73,11 +73,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  divider: {
-    width: 1,
-    backgroundColor: '#E5E7EB',
-    marginVertical: 8,
-  },
   contentContainer: {
     flex: 1,
     paddingHorizontal: 16,

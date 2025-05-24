@@ -3,13 +3,6 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-// SVG-код для линии пульса
-const heartbeatSvg = `
-<svg width="150" height="100" viewBox="0 0 150 100" xmlns="http://www.w3.org/2000/svg" fill="none">
-  <path d="M0 50 H30 L40 30 L50 70 L60 40 L70 60 L80 50 H150" stroke="#6366F1" stroke-width="4" />
-</svg>
-`;
-
 export default function WelcomeScreen() {
   const router = useRouter();
 
