@@ -1,10 +1,12 @@
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
 import Footer from '../src/components/Footer';
-import Header from '../src/components/Header'; // Import the new Header component
+import Header from '../src/components/Header';
 import { saveMeasurement } from '../src/services/storageService';
 
 export default function LogPressureScreen() {
+  const router = useRouter();
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [pulse, setPulse] = useState('');
@@ -26,12 +28,17 @@ export default function LogPressureScreen() {
 
     try {
       await saveMeasurement({ systolic: systolicNum, diastolic: diastolicNum, pulse: pulseNum });
-      Alert.alert('Успех', 'Измерение сохранено.');
-      setSystolic('');
-      setDiastolic('');
-      setPulse('');
-      // Optionally navigate to history screen or clear form
-      // router.push('/history'); 
+      Alert.alert('Успех', 'Измерение сохранено.', [
+        {
+          text: 'OK',
+          onPress: () => {
+            setSystolic('');
+            setDiastolic('');
+            setPulse('');
+            router.push('/history');
+          }
+        }
+      ]);
     } catch (error) {
       Alert.alert('Ошибка', 'Не удалось сохранить измерение.');
       console.error('Failed to save measurement:', error);
@@ -109,3 +116,4 @@ const styles = StyleSheet.create({
     color: '#1F2937',
   },
 });
+const router = useRouter();

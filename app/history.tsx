@@ -73,7 +73,7 @@ export default function HistoryScreen() {
         <Text style={styles.measurementText}>Пульс: {item.pulse} уд/мин</Text>
       </View>
       <TouchableOpacity onPress={() => confirmDelete(item.id)} style={styles.deleteButton}>
-        <Ionicons name="trash-outline" size={24} color="#FF3B30" />
+        <Ionicons name="trash-outline" size={24} color="#007AFF" />
       </TouchableOpacity>
     </View>
   );
