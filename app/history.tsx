@@ -1,7 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { useFocusEffect } from '@react-navigation/native';
 import React, { useState } from 'react';
-import { Alert, FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StatusBar, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import CustomModal from '../src/components/CustomModal';
 import Footer from '../src/components/Footer';
 import Header from '../src/components/Header';
 import { deleteMeasurement, getMeasurements } from '../src/services/storageService';
@@ -11,7 +12,26 @@ import { Measurement } from '../src/types';
 
 export default function HistoryScreen() {
   const [measurements, setMeasurements] = useState<Measurement[]>([]);
-  const [selectedMeasurementId, setSelectedMeasurementId] = useState<string | null>(null);
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalDescription, setModalDescription] = useState('');
+  const [modalButtons, setModalButtons] = useState<{ text: string; style?: 'primary' | 'secondary'; onPress: () => void; }[]>([]);
+
+  const showModal = (title: string, description: string, buttons: { text: string; style?: 'primary' | 'secondary'; onPress: () => void; }[]) => {
+    setModalTitle(title);
+    setModalDescription(description);
+    setModalButtons(buttons);
+    setModalVisible(true);
+  };
+
+  const hideModal = () => {
+    setModalVisible(false);
+    setModalTitle('');
+    setModalDescription('');
+    setModalButtons([]);
+  };
+
   // const router = useRouter(); // router instance is now in Header or passed via props if needed
 
   const loadMeasurements = async () => {
@@ -32,35 +52,20 @@ export default function HistoryScreen() {
     setMeasurements(prevMeasurements => 
       prevMeasurements.filter(measurement => measurement.id !== id)
     );
-    setSelectedMeasurementId(null);
   };
 
   const confirmDelete = (id: string) => {
-    // Check if running on web
-    if (typeof window !== 'undefined' && window.document) {
-      // Use browser's confirm for web
-      if (window.confirm("Are you sure you want to delete this measurement?")) {
-        handleDeleteMeasurement(id);
-      }
-    } else {
-      // Use React Native Alert for native platforms
-      Alert.alert(
-        "Confirm Delete",
-        "Are you sure you want to delete this measurement?",
-        [
-          {
-            text: "Cancel",
-            style: "cancel"
-          },
-          { 
-            text: "Delete", 
-            onPress: () => handleDeleteMeasurement(id),
-            style: "destructive" 
-          }
-        ],
-        { cancelable: true }
-      );
-    }
+    showModal(
+      'Подтверждение удаления',
+      'Вы уверены, что хотите удалить это измерение?',
+      [
+        { text: 'Отмена', style: 'secondary', onPress: hideModal },
+        { text: 'Удалить', style: 'primary', onPress: () => {
+          handleDeleteMeasurement(id);
+          hideModal();
+        } },
+      ]
+    );
   };
 
   const renderItem = ({ item }: { item: Measurement }) => (
@@ -107,6 +112,14 @@ export default function HistoryScreen() {
         )}
       </View>
       <Footer />
+
+      <CustomModal
+        visible={modalVisible}
+        onClose={hideModal}
+        title={modalTitle}
+        description={modalDescription}
+        buttons={modalButtons}
+      />
     </View>
   );
 }

@@ -1,19 +1,40 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
+import CustomModal from '../src/components/CustomModal';
 import Footer from '../src/components/Footer';
 import Header from '../src/components/Header';
 import { saveMeasurement } from '../src/services/storageService';
 
 export default function LogPressureScreen() {
   const router = useRouter();
+  const systolicInputRef = React.useRef<TextInput>(null);
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [pulse, setPulse] = useState('');
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const [modalTitle, setModalTitle] = useState('');
+  const [modalDescription, setModalDescription] = useState('');
+  const [modalButtons, setModalButtons] = useState<{ text: string; style?: 'primary' | 'secondary'; onPress: () => void; }[]>([]);
+
+  const showModal = (title: string, description: string, buttons: { text: string; style?: 'primary' | 'secondary'; onPress: () => void; }[]) => {
+    setModalTitle(title);
+    setModalDescription(description);
+    setModalButtons(buttons);
+    setModalVisible(true);
+  };
+
+  const hideModal = () => {
+    setModalVisible(false);
+    setModalTitle('');
+    setModalDescription('');
+    setModalButtons([]);
+  };
+
   const handleSaveMeasurement = async () => {
     if (!systolic || !diastolic || !pulse) {
-      Alert.alert('Ошибка', 'Пожалуйста, заполните все поля.');
+      showModal('Ошибка', 'Пожалуйста, заполните все поля.', [{ text: 'OK', onPress: hideModal }]);
       return;
     }
 
@@ -22,25 +43,27 @@ export default function LogPressureScreen() {
     const pulseNum = parseInt(pulse, 10);
 
     if (isNaN(systolicNum) || isNaN(diastolicNum) || isNaN(pulseNum)) {
-      Alert.alert('Ошибка', 'Пожалуйста, введите корректные числовые значения.');
+      showModal('Ошибка', 'Пожалуйста, введите корректные числовые значения.', [{ text: 'OK', onPress: hideModal }]);
       return;
     }
 
     try {
       await saveMeasurement({ systolic: systolicNum, diastolic: diastolicNum, pulse: pulseNum });
-      Alert.alert('Успех', 'Измерение сохранено.', [
+      showModal('Успех', 'Измерение сохранено.', [
         {
           text: 'OK',
           onPress: () => {
+            hideModal();
             setSystolic('');
             setDiastolic('');
             setPulse('');
+            systolicInputRef.current?.focus();
             router.push('/history');
           }
         }
       ]);
     } catch (error) {
-      Alert.alert('Ошибка', 'Не удалось сохранить измерение.');
+      showModal('Ошибка', 'Не удалось сохранить измерение.', [{ text: 'OK', onPress: hideModal }]);
       console.error('Failed to save measurement:', error);
     }
   };
@@ -59,6 +82,7 @@ export default function LogPressureScreen() {
           value={systolic}
           onChangeText={setSystolic}
           keyboardType="number-pad"
+          ref={systolicInputRef}
           placeholder="120"
           accessibilityLabel="Поле ввода систолического давления"
         />
@@ -85,6 +109,14 @@ export default function LogPressureScreen() {
       </View>
       
       <Footer showSaveButton={true} onSave={handleSaveMeasurement} />
+
+      <CustomModal
+        visible={modalVisible}
+        onClose={hideModal}
+        title={modalTitle}
+        description={modalDescription}
+        buttons={modalButtons}
+      />
     </View>
   );
 }
