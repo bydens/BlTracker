@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   StatusBar, 
   StyleSheet, 
@@ -25,11 +25,27 @@ export default function LogPressureScreen() {
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [pulse, setPulse] = useState('');
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
   const [modalDescription, setModalDescription] = useState('');
   const [modalButtons, setModalButtons] = useState<{ text: string; style?: 'primary' | 'secondary'; onPress: () => void; }[]>([]);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => {
+      setIsKeyboardVisible(true);
+    });
+    
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => {
+      setIsKeyboardVisible(false);
+    });
+
+    return () => {
+      keyboardDidShowListener?.remove();
+      keyboardDidHideListener?.remove();
+    };
+  }, []);
 
   const showModal = (title: string, description: string, buttons: { text: string; style?: 'primary' | 'secondary'; onPress: () => void; }[]) => {
     setModalTitle(title);
@@ -47,7 +63,7 @@ export default function LogPressureScreen() {
 
   const handleSaveMeasurement = async () => {
     if (!systolic || !diastolic || !pulse) {
-      showModal('Ошибка', 'Пожалуйста, заполните все поля.', [{ text: 'OK', onPress: hideModal }]);
+      showModal('Error', 'Please fill in all fields.', [{ text: 'OK', onPress: hideModal }]);
       return;
     }
 
@@ -56,13 +72,13 @@ export default function LogPressureScreen() {
     const pulseNum = parseInt(pulse, 10);
 
     if (isNaN(systolicNum) || isNaN(diastolicNum) || isNaN(pulseNum)) {
-      showModal('Ошибка', 'Пожалуйста, введите корректные числовые значения.', [{ text: 'OK', onPress: hideModal }]);
+      showModal('Error', 'Please enter valid numeric values.', [{ text: 'OK', onPress: hideModal }]);
       return;
     }
 
     try {
       await saveMeasurement({ systolic: systolicNum, diastolic: diastolicNum, pulse: pulseNum });
-      showModal('Успех', 'Измерение сохранено.', [
+      showModal('Success', 'Measurement saved.', [
         {
           text: 'OK',
           onPress: () => {
@@ -76,7 +92,7 @@ export default function LogPressureScreen() {
         }
       ]);
     } catch (error) {
-      showModal('Ошибка', 'Не удалось сохранить измерение.', [{ text: 'OK', onPress: hideModal }]);
+      showModal('Error', 'Failed to save measurement.', [{ text: 'OK', onPress: hideModal }]);
       console.error('Failed to save measurement:', error);
     }
   };
@@ -90,7 +106,7 @@ export default function LogPressureScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-          <Header title="Добавить измерение" showBackButton={false} />
+          <Header title="Add Measurement" showBackButton={false} />
           
           <ScrollView 
             style={styles.scrollContainer}
@@ -98,7 +114,7 @@ export default function LogPressureScreen() {
             keyboardShouldPersistTaps="handled"
           >
             <View style={styles.formContainer}>
-              <Text style={styles.label}>Систолическое давление (мм рт. ст.):</Text>
+              <Text style={styles.label}>Systolic pressure (mmHg):</Text>
               <TextInput
                 style={styles.input}
                 value={systolic}
@@ -106,12 +122,12 @@ export default function LogPressureScreen() {
                 keyboardType="number-pad"
                 ref={systolicInputRef}
                 placeholder="120"
-                accessibilityLabel="Поле ввода систолического давления"
+                accessibilityLabel="Systolic pressure input field"
                 returnKeyType="next"
                 onSubmitEditing={() => diastolicInputRef.current?.focus()}
               />
 
-              <Text style={styles.label}>Диастолическое давление (мм рт. ст.):</Text>
+              <Text style={styles.label}>Diastolic pressure (mmHg):</Text>
               <TextInput
                 style={styles.input}
                 value={diastolic}
@@ -119,12 +135,12 @@ export default function LogPressureScreen() {
                 keyboardType="number-pad"
                 ref={diastolicInputRef}
                 placeholder="80"
-                accessibilityLabel="Поле ввода диастолического давления"
+                accessibilityLabel="Diastolic pressure input field"
                 returnKeyType="next"
                 onSubmitEditing={() => pulseInputRef.current?.focus()}
               />
 
-              <Text style={styles.label}>Пульс (уд/мин):</Text>
+              <Text style={styles.label}>Pulse (bpm):</Text>
               <TextInput
                 style={styles.input}
                 value={pulse}
@@ -132,14 +148,18 @@ export default function LogPressureScreen() {
                 keyboardType="number-pad"
                 ref={pulseInputRef}
                 placeholder="60"
-                accessibilityLabel="Поле ввода пульса"
+                accessibilityLabel="Pulse input field"
                 returnKeyType="done"
                 onSubmitEditing={Keyboard.dismiss}
               />
             </View>
           </ScrollView>
           
-          <Footer showSaveButton={true} onSave={handleSaveMeasurement} />
+          <Footer 
+            showSaveButton={true} 
+            onSave={handleSaveMeasurement} 
+            isKeyboardVisible={isKeyboardVisible}
+          />
 
           <CustomModal
             visible={modalVisible}

@@ -6,9 +6,10 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 interface FooterProps {
   showSaveButton?: boolean;
   onSave?: () => void;
+  isKeyboardVisible?: boolean;
 }
 
-export default function Footer({ showSaveButton = false, onSave }: FooterProps) {
+export default function Footer({ showSaveButton = false, onSave, isKeyboardVisible = false }: FooterProps) {
   const router = useRouter();
   const pathname = usePathname();
   
@@ -16,36 +17,38 @@ export default function Footer({ showSaveButton = false, onSave }: FooterProps) 
   const isHistoryActive = pathname === '/history';
 
   return (
-    <View style={styles.footer}>
+    <View style={[styles.footer, isKeyboardVisible && styles.keyboardVisibleFooter]}>
       {showSaveButton ? (
         <TouchableOpacity 
           style={[styles.button, styles.primaryButton]} 
           onPress={onSave}
-          accessibilityLabel="Сохранить измерение"
+          accessibilityLabel="Save measurement"
         >
-          <Text style={styles.primaryButtonText}>Save a measurement</Text>
+          <Text style={styles.primaryButtonText}>Save measurement</Text>
         </TouchableOpacity>
       ) : null}
       
-      <View style={styles.tabBar}>
-        <TouchableOpacity 
-          style={styles.tabItem} 
-          onPress={() => router.push('/form')}
-          accessibilityLabel="Explore"
-        >
-          <Ionicons name="add-circle-outline" size={24} color={isFormActive ? '#007AFF' : '#8E8E93'} />
-          <Text style={[styles.tabText, isFormActive && styles.activeTabText]}>Add</Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={styles.tabItem} 
-          onPress={() => router.push('/history')}
-          accessibilityLabel="Inbox"
-        >
-          <Ionicons name="archive-outline" size={24} color={isHistoryActive ? '#007AFF' : '#8E8E93'} />
-          <Text style={[styles.tabText, isHistoryActive && styles.activeTabText]}>history</Text>
-        </TouchableOpacity>
-      </View>
+      {!isKeyboardVisible && (
+        <View style={styles.tabBar}>
+          <TouchableOpacity 
+            style={styles.tabItem} 
+            onPress={() => router.push('/form')}
+            accessibilityLabel="Add measurement"
+          >
+            <Ionicons name="add-circle-outline" size={24} color={isFormActive ? '#007AFF' : '#8E8E93'} />
+            <Text style={[styles.tabText, isFormActive && styles.activeTabText]}>Add</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={styles.tabItem} 
+            onPress={() => router.push('/history')}
+            accessibilityLabel="View history"
+          >
+            <Ionicons name="archive-outline" size={24} color={isHistoryActive ? '#007AFF' : '#8E8E93'} />
+            <Text style={[styles.tabText, isHistoryActive && styles.activeTabText]}>History</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 }
@@ -54,9 +57,12 @@ const styles = StyleSheet.create({
   footer: {
     backgroundColor: '#FFFFFF',
     paddingTop: 12,
-    paddingBottom: 34, // Safe area for devices with home indicator
+    paddingBottom: 34,
     paddingHorizontal: 16,
     width: '100%',
+  },
+  keyboardVisibleFooter: {
+    paddingBottom: 12,
   },
   button: {
     paddingVertical: 16,
