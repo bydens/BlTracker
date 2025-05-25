@@ -1,105 +1,95 @@
 import { Ionicons } from '@expo/vector-icons';
-import { usePathname, useRouter } from 'expo-router';
-import React from 'react';
+import { useRouter } from 'expo-router';
+import React, { memo, useCallback } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface FooterProps {
-  showSaveButton?: boolean;
-  onSave?: () => void;
-  isKeyboardVisible?: boolean;
+  activeTab?: 'form' | 'history';
 }
 
-export default function Footer({ showSaveButton = false, onSave, isKeyboardVisible = false }: FooterProps) {
+interface TabButtonProps {
+  iconName: keyof typeof Ionicons.glyphMap;
+  label: string;
+  isActive: boolean;
+  onPress: () => void;
+}
+
+const TabButton: React.FC<TabButtonProps> = memo(({ iconName, label, isActive, onPress }) => (
+  <TouchableOpacity
+    style={[styles.tab, isActive && styles.activeTab]}
+    onPress={onPress}
+    activeOpacity={0.7}
+  >
+    <Ionicons
+      name={iconName}
+      size={24}
+      color={isActive ? '#006FFD' : '#8E8E93'}
+    />
+    <Text style={[styles.tabText, isActive && styles.activeTabText]}>
+      {label}
+    </Text>
+  </TouchableOpacity>
+));
+
+TabButton.displayName = 'TabButton';
+
+const Footer: React.FC<FooterProps> = memo(({ activeTab }) => {
   const router = useRouter();
-  const pathname = usePathname();
-  
-  const isFormActive = pathname === '/form';
-  const isHistoryActive = pathname === '/history';
+
+  const navigateToForm = useCallback(() => {
+    router.push('/form');
+  }, [router]);
+
+  const navigateToHistory = useCallback(() => {
+    router.push('/history');
+  }, [router]);
 
   return (
-    <View style={[styles.footer, isKeyboardVisible && styles.keyboardVisibleFooter]}>
-      {showSaveButton ? (
-        <TouchableOpacity 
-          style={[styles.button, styles.primaryButton]} 
-          onPress={onSave}
-          accessibilityLabel="Save measurement"
-        >
-          <Text style={styles.primaryButtonText}>Save measurement</Text>
-        </TouchableOpacity>
-      ) : null}
-      
-      {!isKeyboardVisible && (
-        <View style={styles.tabBar}>
-          <TouchableOpacity 
-            style={styles.tabItem} 
-            onPress={() => router.push('/form')}
-            accessibilityLabel="Add measurement"
-          >
-            <Ionicons name="add-circle-outline" size={24} color={isFormActive ? '#007AFF' : '#8E8E93'} />
-            <Text style={[styles.tabText, isFormActive && styles.activeTabText]}>Add</Text>
-          </TouchableOpacity>
-          
-          <TouchableOpacity 
-            style={styles.tabItem} 
-            onPress={() => router.push('/history')}
-            accessibilityLabel="View history"
-          >
-            <Ionicons name="archive-outline" size={24} color={isHistoryActive ? '#007AFF' : '#8E8E93'} />
-            <Text style={[styles.tabText, isHistoryActive && styles.activeTabText]}>History</Text>
-          </TouchableOpacity>
-        </View>
-      )}
+    <View style={styles.footer}>
+      <TabButton
+        iconName="add-circle-outline"
+        label="Добавить"
+        isActive={activeTab === 'form'}
+        onPress={navigateToForm}
+      />
+      <TabButton
+        iconName="list-outline"
+        label="История"
+        isActive={activeTab === 'history'}
+        onPress={navigateToHistory}
+      />
     </View>
   );
-}
+});
+
+Footer.displayName = 'Footer';
 
 const styles = StyleSheet.create({
   footer: {
-    backgroundColor: '#FFFFFF',
-    paddingTop: 12,
-    paddingBottom: 34,
-    paddingHorizontal: 16,
-    width: '100%',
-  },
-  keyboardVisibleFooter: {
-    paddingBottom: 12,
-  },
-  button: {
-    paddingVertical: 16,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 16,
-    marginHorizontal: 16,
-  },
-  primaryButton: {
-    backgroundColor: '#007AFF',
-  },
-  primaryButtonText: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  tabBar: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
     backgroundColor: '#FFFFFF',
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: '#E5E5EA',
+    paddingBottom: 34, // Safe area for home indicator
+    paddingTop: 8,
+  },
+  tab: {
+    flex: 1,
+    alignItems: 'center',
     paddingVertical: 8,
   },
-  tabItem: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    minWidth: 60,
+  activeTab: {
+    // Additional styling for active tab if needed
   },
   tabText: {
     fontSize: 10,
     color: '#8E8E93',
-    marginTop: 4,
-    textAlign: 'center',
+    marginTop: 2,
   },
   activeTabText: {
-    color: '#007AFF',
+    color: '#006FFD',
     fontWeight: '600',
   },
 });
+
+export default Footer;

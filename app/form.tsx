@@ -1,16 +1,16 @@
 import { useRouter } from 'expo-router';
-import React, { useState, useEffect } from 'react';
-import { 
-  StatusBar, 
-  StyleSheet, 
-  Text, 
-  TextInput, 
-  View, 
-  KeyboardAvoidingView, 
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Keyboard,
+  KeyboardAvoidingView,
   Platform,
   ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  TextInput,
   TouchableWithoutFeedback,
-  Keyboard
+  View
 } from 'react-native';
 import CustomModal from '../src/components/CustomModal';
 import Footer from '../src/components/Footer';
@@ -26,6 +26,7 @@ export default function LogPressureScreen() {
   const [diastolic, setDiastolic] = useState('');
   const [pulse, setPulse] = useState('');
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTitle, setModalTitle] = useState('');
@@ -61,7 +62,7 @@ export default function LogPressureScreen() {
     setModalButtons([]);
   };
 
-  const handleSaveMeasurement = async () => {
+  const handleSaveMeasurement = useCallback(async () => {
     if (!systolic || !diastolic || !pulse) {
       showModal('Error', 'Please fill in all fields.', [{ text: 'OK', onPress: hideModal }]);
       return;
@@ -76,6 +77,12 @@ export default function LogPressureScreen() {
       return;
     }
 
+    if (systolicNum < 50 || systolicNum > 300 || diastolicNum < 30 || diastolicNum > 200 || pulseNum < 30 || pulseNum > 200) {
+      showModal('Error', 'Please enter realistic values.', [{ text: 'OK', onPress: hideModal }]);
+      return;
+    }
+
+    setIsLoading(true);
     try {
       await saveMeasurement({ systolic: systolicNum, diastolic: diastolicNum, pulse: pulseNum });
       showModal('Success', 'Measurement saved.', [
@@ -94,8 +101,10 @@ export default function LogPressureScreen() {
     } catch (error) {
       showModal('Error', 'Failed to save measurement.', [{ text: 'OK', onPress: hideModal }]);
       console.error('Failed to save measurement:', error);
+    } finally {
+      setIsLoading(false);
     }
-  };
+  }, [systolic, diastolic, pulse]);
 
   return (
     <KeyboardAvoidingView 
@@ -125,6 +134,7 @@ export default function LogPressureScreen() {
                 accessibilityLabel="Systolic pressure input field"
                 returnKeyType="next"
                 onSubmitEditing={() => diastolicInputRef.current?.focus()}
+                maxLength={3}
               />
 
               <Text style={styles.label}>Diastolic pressure (mmHg):</Text>
@@ -138,6 +148,7 @@ export default function LogPressureScreen() {
                 accessibilityLabel="Diastolic pressure input field"
                 returnKeyType="next"
                 onSubmitEditing={() => pulseInputRef.current?.focus()}
+                maxLength={3}
               />
 
               <Text style={styles.label}>Pulse (bpm):</Text>
@@ -150,7 +161,8 @@ export default function LogPressureScreen() {
                 placeholder="60"
                 accessibilityLabel="Pulse input field"
                 returnKeyType="done"
-                onSubmitEditing={Keyboard.dismiss}
+                onSubmitEditing={handleSaveMeasurement}
+                maxLength={3}
               />
             </View>
           </ScrollView>
@@ -177,7 +189,7 @@ export default function LogPressureScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#F8F9FA',
   },
   scrollContainer: {
     flex: 1,

@@ -1,30 +1,42 @@
-import { Stack } from "expo-router";
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import React, { memo } from 'react';
 
-export default function RootLayout() {
+const RootLayout: React.FC = memo(() => {
   return (
-    <Stack
-      screenOptions={{
-        headerShown: false, // Hide all headers for modern design
-      }}
-    >
-      <Stack.Screen 
-        name="index" 
-        options={{
+    <>
+      <StatusBar style="dark" backgroundColor="#F8F9FA" />
+      <Stack
+        screenOptions={{
           headerShown: false,
+          animation: 'slide_from_right',
+          gestureEnabled: true,
+          gestureDirection: 'horizontal',
         }}
-      />
-      <Stack.Screen 
-        name="form" 
-        options={{
-          headerShown: false,
-        }}
-      />
-      <Stack.Screen 
-        name="history" 
-        options={{
-          headerShown: false,
-        }}
-      />
-    </Stack>
+      >
+        <Stack.Screen 
+          name="index" 
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen 
+          name="form" 
+          options={{
+            headerShown: false,
+          }}
+        />
+        <Stack.Screen 
+          name="history" 
+          options={{
+            headerShown: false,
+          }}
+        />
+      </Stack>
+    </>
   );
-}
+});
+
+RootLayout.displayName = 'RootLayout';
+
+export default RootLayout;

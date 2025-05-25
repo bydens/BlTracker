@@ -1,56 +1,109 @@
-import React from 'react';
-import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { memo, useCallback } from 'react';
+import {
+  Dimensions,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { ModalButton } from '../types';
 
 interface CustomModalProps {
   visible: boolean;
-  onClose: () => void;
   title: string;
   description: string;
-  buttons: {
-    text: string;
-    style?: 'primary' | 'secondary';
-    onPress: () => void;
-  }[];
+  buttons: ModalButton[];
+  onClose: () => void;
+  dismissOnBackdrop?: boolean;
 }
 
-const CustomModal: React.FC<CustomModalProps> = ({
+interface ModalButtonComponentProps {
+  button: ModalButton;
+  index: number;
+  totalButtons: number;
+}
+
+const ModalButtonComponent: React.FC<ModalButtonComponentProps> = memo(({ 
+  button, 
+  index, 
+  totalButtons 
+}) => {
+  const isPrimary = button.style === 'primary';
+  const isLastButton = index === totalButtons - 1;
+  
+  return (
+    <TouchableOpacity
+      style={[
+        styles.button,
+        isPrimary ? styles.primaryButton : styles.secondaryButton,
+        totalButtons === 1 && styles.singleButton,
+      ]}
+      onPress={button.onPress}
+      activeOpacity={0.8}
+    >
+      <Text style={[
+        styles.buttonText,
+        isPrimary ? styles.primaryButtonText : styles.secondaryButtonText
+      ]}>
+        {button.text}
+      </Text>
+    </TouchableOpacity>
+  );
+});
+
+ModalButtonComponent.displayName = 'ModalButtonComponent';
+
+const CustomModal: React.FC<CustomModalProps> = memo(({
   visible,
-  onClose,
   title,
   description,
   buttons,
+  onClose,
+  dismissOnBackdrop = true,
 }) => {
+  const handleBackdropPress = useCallback(() => {
+    if (dismissOnBackdrop) {
+      onClose();
+    }
+  }, [dismissOnBackdrop, onClose]);
+
   return (
     <Modal
-      transparent={true}
-      animationType="fade"
       visible={visible}
+      transparent
+      animationType="fade"
       onRequestClose={onClose}
+      statusBarTranslucent
     >
-      <View style={styles.overlay}>
-        <View style={styles.modalContainer}>
-          <View style={styles.contentContainer}>
-            <Text style={styles.title}>{title}</Text>
-            <Text style={styles.description}>{description}</Text>
-          </View>
-          <View style={styles.actionsContainer}>
+      <Pressable style={styles.overlay} onPress={handleBackdropPress}>
+        <Pressable style={styles.modal} onPress={(e) => e.stopPropagation()}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{description}</Text>
+          
+          <View style={[
+            styles.buttonContainer,
+            buttons.length === 1 && styles.singleButtonContainer
+          ]}>
             {buttons.map((button, index) => (
-              <TouchableOpacity
+              <ModalButtonComponent
                 key={index}
-                style={[styles.button, button.style === 'secondary' ? styles.secondaryButton : styles.primaryButton]}
-                onPress={button.onPress}
-              >
-                <Text style={[styles.buttonText, button.style === 'secondary' ? styles.secondaryButtonText : styles.primaryButtonText]}>
-                  {button.text}
-                </Text>
-              </TouchableOpacity>
+                button={button}
+                index={index}
+                totalButtons={buttons.length}
+              />
             ))}
           </View>
-        </View>
-      </View>
+        </Pressable>
+      </Pressable>
     </Modal>
   );
-};
+});
+
+CustomModal.displayName = 'CustomModal';
+
+const { width } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
   overlay: {
@@ -58,75 +111,70 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 20,
   },
-  modalContainer: {
-    width: 300,
+  modal: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    padding: 16,
-    alignItems: 'center',
-    gap: 20,
-  },
-  contentContainer: {
-    width: '100%',
-    padding: 8,
-    alignItems: 'center',
-    gap: 8,
+    borderRadius: 12,
+    padding: 24,
+    width: width - 40,
+    maxWidth: 400,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 8,
   },
   title: {
-    fontFamily: 'Inter',
-    fontWeight: '800',
-    fontSize: 16,
-    lineHeight: 16 * 1.2102272510528564,
-    letterSpacing: 16 * 0.005,
-    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
     color: '#1F2024',
+    textAlign: 'center',
+    marginBottom: 12,
   },
   description: {
-    fontFamily: 'Inter',
-    fontWeight: '400',
-    fontSize: 12,
-    lineHeight: 12 * 1.3333333333333333,
-    letterSpacing: 12 * 0.01,
+    fontSize: 14,
+    color: '#6B7280',
     textAlign: 'center',
-    color: '#71727A',
+    lineHeight: 20,
+    marginBottom: 24,
   },
-  actionsContainer: {
-    width: '100%',
+  buttonContainer: {
     flexDirection: 'row',
-    // justifyContent: 'stretch',
-    alignItems: 'stretch',
-    gap: 8,
+    gap: 12,
+  },
+  singleButtonContainer: {
+    flexDirection: 'column',
   },
   button: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    height: 40,
+    borderRadius: 8,
+    alignItems: 'center',
+    minHeight: 44,
+    justifyContent: 'center',
+  },
+  singleButton: {
+    flex: 0,
   },
   primaryButton: {
-    backgroundColor: '#006FFD',
+    backgroundColor: '#FF3B30',
   },
   secondaryButton: {
-    backgroundColor: 'transparent',
-    borderWidth: 1.5,
-    borderColor: '#006FFD',
+    backgroundColor: '#F3F4F6',
   },
   buttonText: {
-    fontFamily: 'Inter',
+    fontSize: 16,
     fontWeight: '600',
-    fontSize: 12,
-    lineHeight: 12 * 1.2102272510528564,
-    textAlign: 'left',
   },
   primaryButtonText: {
     color: '#FFFFFF',
   },
   secondaryButtonText: {
-    color: '#006FFD',
+    color: '#374151',
   },
 });
 
