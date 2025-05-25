@@ -1,6 +1,17 @@
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { StatusBar, StyleSheet, Text, TextInput, View } from 'react-native';
+import { 
+  StatusBar, 
+  StyleSheet, 
+  Text, 
+  TextInput, 
+  View, 
+  KeyboardAvoidingView, 
+  Platform,
+  ScrollView,
+  TouchableWithoutFeedback,
+  Keyboard
+} from 'react-native';
 import CustomModal from '../src/components/CustomModal';
 import Footer from '../src/components/Footer';
 import Header from '../src/components/Header';
@@ -9,6 +20,8 @@ import { saveMeasurement } from '../src/services/storageService';
 export default function LogPressureScreen() {
   const router = useRouter();
   const systolicInputRef = React.useRef<TextInput>(null);
+  const diastolicInputRef = React.useRef<TextInput>(null);
+  const pulseInputRef = React.useRef<TextInput>(null);
   const [systolic, setSystolic] = useState('');
   const [diastolic, setDiastolic] = useState('');
   const [pulse, setPulse] = useState('');
@@ -69,55 +82,75 @@ export default function LogPressureScreen() {
   };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
-      <Header title="Add Measurement" showBackButton={false} />
-      {/* The old navBar View is replaced by the Header component */}
+    <KeyboardAvoidingView 
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <StatusBar barStyle="dark-content" backgroundColor="#FFFFFF" />
+          <Header title="Добавить измерение" showBackButton={false} />
+          
+          <ScrollView 
+            style={styles.scrollContainer}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.formContainer}>
+              <Text style={styles.label}>Систолическое давление (мм рт. ст.):</Text>
+              <TextInput
+                style={styles.input}
+                value={systolic}
+                onChangeText={setSystolic}
+                keyboardType="number-pad"
+                ref={systolicInputRef}
+                placeholder="120"
+                accessibilityLabel="Поле ввода систолического давления"
+                returnKeyType="next"
+                onSubmitEditing={() => diastolicInputRef.current?.focus()}
+              />
 
-      {/* Form Content */}
-      <View style={styles.formContainer}>
-        <Text style={styles.label}>Систолическое давление (мм рт. ст.):</Text>
-        <TextInput
-          style={styles.input}
-          value={systolic}
-          onChangeText={setSystolic}
-          keyboardType="number-pad"
-          ref={systolicInputRef}
-          placeholder="120"
-          accessibilityLabel="Поле ввода систолического давления"
-        />
+              <Text style={styles.label}>Диастолическое давление (мм рт. ст.):</Text>
+              <TextInput
+                style={styles.input}
+                value={diastolic}
+                onChangeText={setDiastolic}
+                keyboardType="number-pad"
+                ref={diastolicInputRef}
+                placeholder="80"
+                accessibilityLabel="Поле ввода диастолического давления"
+                returnKeyType="next"
+                onSubmitEditing={() => pulseInputRef.current?.focus()}
+              />
 
-        <Text style={styles.label}>Диастолическое давление (мм рт. ст.):</Text>
-        <TextInput
-          style={styles.input}
-          value={diastolic}
-          onChangeText={setDiastolic}
-          keyboardType="number-pad"
-          placeholder="80"
-          accessibilityLabel="Поле ввода диастолического давления"
-        />
+              <Text style={styles.label}>Пульс (уд/мин):</Text>
+              <TextInput
+                style={styles.input}
+                value={pulse}
+                onChangeText={setPulse}
+                keyboardType="number-pad"
+                ref={pulseInputRef}
+                placeholder="60"
+                accessibilityLabel="Поле ввода пульса"
+                returnKeyType="done"
+                onSubmitEditing={Keyboard.dismiss}
+              />
+            </View>
+          </ScrollView>
+          
+          <Footer showSaveButton={true} onSave={handleSaveMeasurement} />
 
-        <Text style={styles.label}>Пульс (уд/мин):</Text>
-        <TextInput
-          style={styles.input}
-          value={pulse}
-          onChangeText={setPulse}
-          keyboardType="number-pad"
-          placeholder="60"
-          accessibilityLabel="Поле ввода пульса"
-        />
-      </View>
-      
-      <Footer showSaveButton={true} onSave={handleSaveMeasurement} />
-
-      <CustomModal
-        visible={modalVisible}
-        onClose={hideModal}
-        title={modalTitle}
-        description={modalDescription}
-        buttons={modalButtons}
-      />
-    </View>
+          <CustomModal
+            visible={modalVisible}
+            onClose={hideModal}
+            title={modalTitle}
+            description={modalDescription}
+            buttons={modalButtons}
+          />
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
@@ -126,9 +159,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#FFFFFF',
   },
-  formContainer: {
+  scrollContainer: {
     flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
+  },
+  formContainer: {
     paddingHorizontal: 16,
+    paddingTop: 20,
   },
   label: {
     fontSize: 16,
